@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>German in 3D</title>
+<meta name="description" content="German grammar from A2 to B1, one rule per week, each as a small painted 3D world with audio and a quiz.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a week-by-week index on the left (top on phones) beside one painted 3D stage per grammar rule, explainer, audio and quiz beneath it.
+   Look: painterly cel-shaded 3D (toon bands, ink outlines, paint grain) on dark ink with painted-paper panels. */
+:root {
+  /* dusk (default): deep teal/slate shadows, brass, copper, lamp-amber light, one hot magenta accent */
+  --bg: #11151b; --surface: #1b2128; --fg: #f1e8d6; --muted: #a9a08f; --line: #343d47;
+  --accent: #ec4f8c;   /* hot accent: a rule firing */
+  --warm: #f3aa4a;     /* lamp-amber light */
+  --bad: #e8643f; --good: #63c3a2;
+  --c1: #3c9b96; --c2: #6c8fc2; --c3: #c98b4e; --c4: #9aa77a; --neutral: #5a6270;
+  --ink: #0b0e13; --shade: #3a3c72; --brass: #c9a24c; --copper: #b8693d; --wood: #6e4a33; --paper: #efe3c8;
+  --subj: #5b7cae; --verb: #c93f78; --verb2: #e39b38; --obj: #2f918b; --conn: #b8693d;
+  --sky-top: #16202d; --sky-low: #4d3a3a; --vignette: rgba(5, 7, 10, 0.55);
+  --font-display: "Bebas Neue", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .4  0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #ece3d0; --surface: #f7f0e1; --fg: #1c2127; --muted: #5d584d; --line: #d6c9ae;
+    --accent: #c42f6b; --warm: #c57a12; --bad: #b8432a; --good: #23866a;
+    --c1: #23807b; --c2: #4b6fa6; --c3: #a8672c; --c4: #6b7a49; --neutral: #9c968a;
+    --ink: #1a1c22; --shade: #5c6299; --brass: #b38a35; --copper: #a85c30; --wood: #7a5236; --paper: #fbf4e4;
+    --subj: #4e6fa3; --verb: #bb346c; --verb2: #d88c27; --obj: #23807b; --conn: #a85c30;
+    --sky-top: #9db6c2; --sky-low: #f0cf9c; --vignette: rgba(60, 40, 20, 0.28);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #ece3d0; --surface: #f7f0e1; --fg: #1c2127; --muted: #5d584d; --line: #d6c9ae;
+  --accent: #c42f6b; --warm: #c57a12; --bad: #b8432a; --good: #23866a;
+  --c1: #23807b; --c2: #4b6fa6; --c3: #a8672c; --c4: #6b7a49; --neutral: #9c968a;
+  --ink: #1a1c22; --shade: #5c6299; --brass: #b38a35; --copper: #a85c30; --wood: #7a5236; --paper: #fbf4e4;
+  --subj: #4e6fa3; --verb: #bb346c; --verb2: #d88c27; --obj: #23807b; --conn: #a85c30;
+  --sky-top: #9db6c2; --sky-low: #f0cf9c; --vignette: rgba(60, 40, 20, 0.28);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg) var(--grain); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
+.shell {
+  max-width: 1280px; margin: 0 auto; padding-block: 32px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 36px; align-items: start;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.02em; text-wrap: balance; margin: 0; line-height: 1.05; }
+p { margin: 0; }
+a { color: inherit; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+aside { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); display: grid; gap: 22px; max-height: calc(100vh - 32px); overflow-y: auto; }
+.brand { display: grid; gap: 6px; }
+.brand h1 { font-size: 2.1rem; }
+.brand p { font-size: 0.85rem; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.72rem; }
+.legend span { padding: 1px 7px; border-radius: 4px; color: #f7ecd4; border: 1px solid var(--ink); }
+.themebtn { justify-self: start; }
+#nav { display: grid; gap: 18px; }
+.wk { display: grid; gap: 6px; }
+.wk ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.wk a { display: flex; gap: 10px; align-items: baseline; text-decoration: none; padding: 6px 8px; border-radius: 6px; font-size: 0.92rem; }
+.wk a:hover { background: var(--surface); }
+.wk a[aria-current="page"] { background: var(--fg); color: var(--surface); }
+.wk a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.wk .d { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 4.2ch; }
+.wk a[aria-current="page"] .d { color: inherit; opacity: .7; }
+
+main { display: grid; gap: 28px; min-width: 0; }
+.head { display: grid; gap: 10px; max-width: 720px; }
+.head h2 { font-size: clamp(2.6rem, 6vw, 4rem); }
+.stroke { display: block; width: min(320px, 70%); height: 12px; margin-top: -4px; }
+.stroke path { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; filter: url(#rough); }
+.tagline { font-weight: 500; font-size: clamp(1.05rem, 2.2vw, 1.25rem); line-height: 1.45; }
+
+.card { background: var(--surface) var(--grain); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; box-shadow: 0 10px 30px -18px rgba(0,0,0,.6); }
+#prompt { padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: 0.92rem; color: var(--muted); }
+#stage { position: relative; height: clamp(330px, 46vw, 520px); touch-action: pan-y; overflow: hidden; }
+#stage canvas { display: block; width: 100%; height: 100%; }
+#stage .grain { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; opacity: .9; }
+#controls { padding: 16px 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; }
+#controls:empty { display: none; }
+
+/* shared control styles for scenes */
+.btn { font: 600 0.88rem var(--font-body); border: 1px solid var(--ink); border-radius: 8px; padding: 9px 15px; cursor: pointer; background: var(--accent); color: #fff7f0; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn:focus-visible, .chip:focus-visible, .opt:focus-visible, .say:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chip { font: 500 0.86rem var(--font-body); border: 1px solid var(--line); background: transparent; color: var(--fg); padding: 7px 12px; border-radius: 999px; cursor: pointer; min-height: 36px; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--surface); border-color: var(--fg); }
+.group { display: grid; gap: 6px; }
+.group > .lbl { font: 500 0.7rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.group > .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.readout { font-size: 0.95rem; color: var(--muted); flex: 1 1 100%; }
+.readout strong, .readout b { color: var(--fg); }
+.readout .de { color: var(--fg); font-weight: 600; }
+.tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); pointer-events: none; font: 500 0.75rem/1.25 var(--font-body); color: var(--fg); text-align: center; max-width: 160px; white-space: normal; text-shadow: 0 1px 0 var(--bg), 0 0 6px var(--bg); }
+.tag b { display: block; font: 400 1.1rem var(--font-display); letter-spacing: .04em; }
+.tag.q { font: 400 1.25rem var(--font-display); color: var(--warm); letter-spacing: .05em; max-width: none; white-space: nowrap; }
+
+/* role colours in text */
+.r-subj { color: var(--subj); } .r-verb { color: var(--verb); } .r-verb2 { color: var(--verb2); } .r-obj { color: var(--obj); } .r-conn { color: var(--conn); }
+.hl { color: var(--accent); font-weight: 700; }
+
+/* hören: small brass speaker button, hidden unless a German voice exists */
+.say { display: none; align-items: center; gap: 5px; font: 600 0.75rem var(--font-body); color: var(--ink); background: linear-gradient(#e2c06a, var(--brass)); border: 1px solid var(--ink); border-radius: 999px; padding: 3px 10px 3px 7px; cursor: pointer; vertical-align: middle; white-space: nowrap; }
+.say svg { width: 14px; height: 14px; }
+.has-de .say { display: inline-flex; }
+.novoice { font-size: 0.8rem; color: var(--muted); }
+.has-de .novoice { display: none; }
+
+#body { display: grid; gap: 40px; max-width: 720px; }
+#body section { display: grid; gap: 14px; }
+#body h2 { font-size: 2rem; justify-self: start; }
+#body h2::after { content: ""; display: block; height: 4px; margin-top: 2px; background: var(--warm); border-radius: 3px; filter: url(#rough); }
+#body h3 { font-size: 1.3rem; }
+#body p { max-width: 65ch; }
+#body .rule { font-size: 1.12rem; font-weight: 600; border-left: 4px solid var(--accent); padding-left: 12px; }
+#body table { border-collapse: collapse; font: 0.84rem var(--font-mono); width: 100%; background: var(--surface) var(--grain); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+#body .tw { overflow-x: auto; }
+#body th, #body td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+#body th { font-weight: 500; color: var(--muted); font-size: 0.74rem; text-transform: uppercase; letter-spacing: .06em; }
+#body tr:last-child td { border-bottom: 0; }
+#body .ex { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+#body .ex li { display: grid; gap: 2px; padding: 10px 12px; background: var(--surface) var(--grain); border: 1px solid var(--line); border-radius: 8px; }
+#body .ex .de { font-weight: 600; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+#body .ex .en { color: var(--muted); font-size: 0.9rem; }
+#body .mistakes { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; }
+#body .mistakes s { color: var(--bad); }
+#body .try { background: var(--surface) var(--grain); border: 1px solid var(--line); border-left: 4px solid var(--warm); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; }
+#body .try ul { margin: 0; padding-left: 1.1em; }
+
+/* quiz */
+.quiz { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; counter-reset: q; }
+.quiz .q { position: relative; display: grid; gap: 8px; padding: 12px 14px; background: var(--surface) var(--grain); border: 1px solid var(--line); border-radius: 10px; counter-increment: q; overflow: hidden; }
+.quiz .qt { font-weight: 600; }
+.quiz .qt::before { content: counter(q) ". "; color: var(--muted); font-family: var(--font-mono); font-size: .85em; }
+.quiz .qh { font-size: .85rem; color: var(--muted); }
+.quiz .gap { display: inline-block; min-width: 3.2em; border-bottom: 2px solid var(--warm); }
+.quiz .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { font: 500 0.92rem var(--font-body); background: transparent; color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; min-height: 40px; }
+.opt[aria-disabled="true"] { cursor: default; }
+.opt.is-right { background: var(--good); color: #0b0e13; border-color: var(--ink); }
+.opt.is-wrong { background: var(--bad); color: #fff; border-color: var(--ink); }
+.quiz .built { flex: 1 1 100%; min-height: 46px; display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px dashed var(--line); border-radius: 8px; }
+.quiz .built:empty::before { content: "Tap the tiles in order"; color: var(--muted); font-size: .85rem; align-self: center; padding-left: 4px; }
+.quiz .pool, .quiz .qrow { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 6px; }
+.tile { background: var(--wood); color: #f7ecd4; border-color: var(--ink); }
+.quiz .why { font-size: .9rem; color: var(--muted); }
+.quiz .why strong { color: var(--fg); }
+.quiz .right { border-color: var(--good); }
+.quiz .wrong { border-color: var(--bad); }
+.quiz .splash::after { content: ""; position: absolute; right: -30px; top: -30px; width: 140px; height: 140px; pointer-events: none;
+  background: radial-gradient(circle at 40% 40%, var(--accent) 0 18%, transparent 19%), radial-gradient(circle at 70% 65%, var(--warm) 0 9%, transparent 10%), radial-gradient(circle at 25% 75%, var(--accent) 0 6%, transparent 7%), radial-gradient(circle at 60% 25%, var(--warm) 0 5%, transparent 6%);
+  filter: url(#rough); animation: splash .7s steps(6) forwards; }
+@keyframes splash { 0% { transform: scale(.2); opacity: 1; } 60% { transform: scale(1.1); opacity: .85; } 100% { transform: scale(1.2); opacity: 0; } }
+.qfoot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 12px; }
+.score { font: 400 1.4rem var(--font-display); letter-spacing: .04em; }
+
+#pager { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.92rem; }
+#pager a { text-decoration: none; color: var(--warm); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-top: 20px; }
+  aside { position: static; max-height: none; }
+}
+@media (max-width: 560px) {
+  .tag { font-size: 0.68rem; max-width: 110px; }
+  #controls { padding: 14px; gap: 12px; }
+  #body h2 { font-size: 1.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="rough" x="-10%" y="-300%" width="120%" height="700%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.035 0.5" numOctaves="2" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" scale="4"/>
+  </filter>
+</svg>
+
+<div class="shell" id="top">
+  <aside>
+    <div class="brand">
+      <span class="eyebrow">A2.2 → B1 · one rule a week</span>
+      <h1>German in 3D</h1>
+      <p>Each grammar rule is a small painted world you can poke at, with spoken examples and a five-question quiz.</p>
+      <p class="legend" aria-label="Colour key for word blocks"><span style="background:var(--subj)">subject</span><span style="background:var(--verb)">verb</span><span style="background:var(--verb2)">2nd verb part</span><span style="background:var(--obj)">object</span><span style="background:var(--conn)">connector</span></p>
+      <button type="button" class="btn ghost themebtn" id="themebtn">Daylight</button>
+    </div>
+    <nav id="nav" aria-label="Grammar topics by week"></nav>
+  </aside>
+  <main>
+    <div class="head">
+      <span class="eyebrow" id="day"></span>
+      <h2 id="title"></h2>
+      <svg class="stroke" viewBox="0 0 320 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8 C 70 2, 150 11, 317 4"/></svg>
+      <p class="tagline" id="tagline"></p>
+    </div>
+    <div class="card">
+      <p id="prompt"></p>
+      <div id="stage" role="img" aria-label="Interactive 3D illustration of the grammar rule"></div>
+      <div id="controls"></div>
+    </div>
+    <div id="body"></div>
+    <nav id="pager" aria-label="Previous and next topic"></nav>
+  </main>
+</div>
+
+<script>
+// theme toggle: flips between dusk and daylight, remembering nothing (no storage needed)
+(function () {
+  const b = document.getElementById('themebtn'), r = document.documentElement;
+  const isLight = () => r.dataset.theme ? r.dataset.theme === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
+  const label = () => { b.textContent = isLight() ? 'Dusk' : 'Daylight'; b.setAttribute('aria-label', isLight() ? 'Switch to dark theme' : 'Switch to light theme'); };
+  b.addEventListener('click', () => { r.dataset.theme = isLight() ? 'dark' : 'light'; label(); });
+  label();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="app.js"></script>
+<script src="scenes/phase1.js"></script>
