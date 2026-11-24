@@ -1051,4 +1051,6 @@
       render(false);
     },
   });
+  // shared with scenes/phase2.js and phase3.js
+  window.GK = { kit, cap, attr, say, ex, table, R, gear, makeFigure };
 })();

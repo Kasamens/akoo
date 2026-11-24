@@ -187,7 +187,7 @@
   }
 
   // ---------- word blocks ----------
-  const ROLE = { subj: 'subj', verb: 'verb', verb2: 'verb2', obj: 'obj', conn: 'conn', punct: 'brass', plain: 'wood', e: 'subj', en: 'verb2', er: 'obj', es: 'conn', em: 'verb' };
+  const ROLE = { subj: 'subj', verb: 'verb', verb2: 'verb2', obj: 'obj', conn: 'conn', punct: 'brass', plain: 'wood', bad: 'bad', e: 'subj', en: 'verb2', er: 'obj', es: 'conn', em: 'verb' };
   const BH = 0.8, BD = 0.5, PX = 128, WPP = (BH * 0.72) / PX; // world units per canvas pixel
   const live = []; // blocks to repaint when web fonts finish loading
   const FONT = '700 78px Inter, "Helvetica Neue", Arial, sans-serif';
@@ -262,6 +262,7 @@
     row.arrange = (keys, o) => {
       o = o || {};
       const gap = o.gap != null ? o.gap : 0.16, maxW = o.maxW || 1e9, lh = BH + 0.45;
+      const isTight = k => blocks[k].role === 'punct' || !!(o.tight && o.tight.includes(k));
       // capitalise the first word of the sentence, keep the rest as written
       keys.forEach((k, i) => {
         const b = blocks[k], base = (o.text && o.text[k]) || b.base;
@@ -272,7 +273,7 @@
       const lines = [[]]; let lw = 0;
       keys.forEach(k => {
         const b = blocks[k], w = b.width;
-        const tight = b.role === 'punct';
+        const tight = isTight(k);
         const need = (lines[lines.length - 1].length ? (tight ? 0.04 : gap) : 0) + w;
         if (lw + need > maxW && lines[lines.length - 1].length && !tight) { lines.push([]); lw = 0; }
         const cur = lines[lines.length - 1];
@@ -281,12 +282,12 @@
       });
       let wmax = 0;
       lines.forEach((ln, li) => {
-        let tot = 0; ln.forEach((k, i) => tot += blocks[k].width + (i ? (blocks[k].role === 'punct' ? 0.04 : gap) : 0));
+        let tot = 0; ln.forEach((k, i) => tot += blocks[k].width + (i ? (isTight(k) ? 0.04 : gap) : 0));
         wmax = Math.max(wmax, tot);
         let x = -tot / 2;
         ln.forEach((k, i) => {
           const b = blocks[k];
-          if (i) x += b.role === 'punct' ? 0.04 : gap;
+          if (i) x += isTight(k) ? 0.04 : gap;
           b.st.tp.set(x + b.width / 2, -li * lh - (b.role === 'punct' ? BH * 0.3 : 0), 0);
           b.st.ts = b.role === 'punct' ? 0.55 : 1;
           if (o.lift && o.lift[k]) b.st.tp.y += o.lift[k];
@@ -522,7 +523,7 @@
 
   // ---------- nav + routing ----------
   const nav = document.getElementById('nav');
-  const WEEKS = { 1: 'Phase 1 · Finish A2' };
+  const WEEKS = { 1: 'Phase 1 · Finish A2', 2: 'Phase 2 · Early B1', 3: 'Phase 3 · B1 and exam polish' };
 
   function buildNav() {
     scenes.sort((a, b) => a.day - b.day);
