@@ -62,6 +62,26 @@
   <p class="rule">If a parrot can learn to talk, so can you, given the right material and direction.</p>
   <p><b>Akoo</b> means parrot in Twi. Ghana’s forests are home to the African grey parrot, the species best known for learning human words. The idea behind the app is simple: if a bird can pick up a language, a person with a clear path and good material can too. This path starts from zero (A1), goes through A2 and ends at B1, one grammar rule a week, each as a small 3D world you can play with.</p>
 </section>
+<section id="protect">
+  <div class="try">
+    <h3>Protect the real Akoo</h3>
+    <p>The bird this app is named after is in trouble. The grey parrot has been listed as <b>Endangered</b> on the IUCN Red List since 2016, mainly because of trapping for the pet trade and loss of forest. In Ghana, a study published in 2016 found its numbers had fallen by 90 to 99% since 1992: the parrot was “virtually eliminated” from the country whose language gave Akoo its name.</p>
+    <p>The <a href="https://parrots.org/about-wpt/programs-projects/grey-parrot-protection/" target="_blank" rel="noopener">World Parrot Trust’s Grey Parrot Program</a> has worked to save the species since 2001. Its work includes:</p>
+    <ul>
+      <li><b>Stopping the trade:</b> it helped enforce wildlife laws across West and Central Africa, and campaigned successfully to move the species to CITES Appendix I, which bans international commercial trade.</li>
+      <li><b>Rescue and release:</b> it has rescued, treated and returned hundreds of trafficked parrots to the wild, with a mobile veterinary team and care centres.</li>
+      <li><b>Research and habitat:</b> it studies wild populations and works with local communities to protect forests and nesting trees.</li>
+      <li><b>Local partners:</b> it trains in-country teams in veterinary care, rescue, nest monitoring and law enforcement.</li>
+    </ul>
+    <p>How you can help:</p>
+    <ul>
+      <li>Never buy a wild-caught parrot. If you want a bird, ask where it came from.</li>
+      <li>Share this page or the Trust’s program with friends, especially in Ghana and West Africa.</li>
+      <li><a href="https://parrots.org/donate/" target="_blank" rel="noopener">Donate to the World Parrot Trust</a>.</li>
+    </ul>
+    <p class="fine">Akoo is an independent learning project and is not affiliated with the World Parrot Trust. Sources: <a href="https://parrots.org/about-wpt/programs-projects/grey-parrot-protection/" target="_blank" rel="noopener">World Parrot Trust</a>, <a href="https://datazone.birdlife.org/species/factsheet/grey-parrot-psittacus-erithacus/details" target="_blank" rel="noopener">BirdLife International / IUCN Red List</a>, Annorbah, Collar &amp; Marsden (2016), <i>Ibis</i>.</p>
+  </div>
+</section>
 <section>
   <h2>How parrots learn to speak</h2>
   <ul>

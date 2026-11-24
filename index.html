@@ -184,6 +184,9 @@ main { display: grid; gap: 28px; min-width: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+  .protect a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .protect a:hover { text-decoration: underline; }
+  .fine { font-size: 0.85em; color: var(--muted); }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -199,6 +202,7 @@ main { display: grid; gap: 28px; min-width: 0; }
       <span class="eyebrow">A1 → A2 → B1 · one rule a week</span>
       <h1>Akoo</h1>
       <p><i>Akoo</i> means parrot. If a parrot can learn to talk, so can you, with the right material and direction. Start from zero: each grammar rule is a small painted world you can poke at, with spoken examples and a five-question quiz.</p>
+      <p class="protect"><a href="#akoo">🦜 Wild grey parrots are endangered. See how to help →</a></p>
       <p class="legend" aria-label="Colour key for word blocks"><span style="background:var(--subj)">subject</span><span style="background:var(--verb)">verb</span><span style="background:var(--verb2)">2nd verb part</span><span style="background:var(--obj)">object</span><span style="background:var(--conn)">connector</span></p>
       <button type="button" class="btn ghost themebtn" id="themebtn">Daylight</button>
     </div>
