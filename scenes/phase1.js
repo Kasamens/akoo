@@ -1,4 +1,4 @@
-/* German in 3D, Phase 1 (weeks 1-6): six grammar rules as painted 3D worlds.
+/* Akoo, level A2 (weeks 9-14): six grammar rules as painted 3D worlds.
  * Uses the shared engine in app.js (ctx.solid, ctx.words, ctx.pop, ctx.backdrop, ctx.say, quiz).
  * All example sentences are original, on the study plan's themes: Reisen, Wohnen, Arbeit.
  */
@@ -89,7 +89,7 @@
   }
 
   // =====================================================================
-  // Week 1: Nebensätze
+  // Week 9 (A2): Nebensätze
   // =====================================================================
   const NS = {
     weil: { mS: 'ich', mV: 'bleibe', mR: ['zu Hause', 'obj'], sS: 'ich', sV: 'bin', sR: ['müde', 'obj'], en: 'I’m staying at home because I’m tired.', mean: 'because' },
@@ -99,7 +99,7 @@
   };
 
   MM.register({
-    id: 'nebensaetze', day: 1, week: 1,
+    id: 'nebensaetze', day: 9, week: 2,
     title: 'Nebensätze',
     tagline: 'After weil, dass, wenn and ob, the conjugated verb goes to the very end of its clause.',
     prompt: 'Pick a connector, then change the sentence shape. Watch the magenta block: the conjugated verb.',
@@ -221,7 +221,7 @@
   });
 
   // =====================================================================
-  // Week 2: Perfekt vs. Präteritum
+  // Week 10 (A2): Perfekt vs. Präteritum
   // =====================================================================
   const PV = {
     fahren: { S: 'ich', aux: 'bin', part: 'gefahren', prat: 'fuhr', R: 'nach Hamburg', sein: true, en: 'I went (travelled) to Hamburg.' },
@@ -232,7 +232,7 @@
   };
 
   MM.register({
-    id: 'perfekt-praeteritum', day: 2, week: 1,
+    id: 'perfekt-praeteritum', day: 10, week: 2,
     title: 'Perfekt vs. Präteritum',
     tagline: 'Speak in Perfekt (haben/sein + participle at the end); write stories in Präteritum, one verb in position 2.',
     prompt: 'Pick a verb, then switch tense. The Präteritum block splits into haben/sein (position 2) and the participle (the end).',
@@ -350,7 +350,7 @@
   });
 
   // =====================================================================
-  // Week 3: Wechselpräpositionen
+  // Week 11 (A2): Wechselpräpositionen
   // =====================================================================
   // positions are the cat's feet; ctrl is the arc's control point for the Wohin? path
   const WP = {
@@ -381,7 +381,7 @@
   }
 
   MM.register({
-    id: 'wechselpraepositionen', day: 3, week: 1,
+    id: 'wechselpraepositionen', day: 11, week: 2,
     title: 'Wechselpräpositionen',
     tagline: 'Nine prepositions take the Dativ for a location (Wo?) and the Akkusativ for a direction (Wohin?).',
     prompt: 'Pick a preposition, then switch between Wo? (staying put) and Wohin? (moving somewhere). Watch the article flip.',
@@ -554,7 +554,7 @@
   });
 
   // =====================================================================
-  // Week 4: Reflexive Verben
+  // Week 12 (A2): Reflexive Verben
   // =====================================================================
   const PERS = [
     { v: 'ich', akk: 'mich', dat: 'mir', label: 'ich' },
@@ -586,7 +586,7 @@
   }
 
   MM.register({
-    id: 'reflexive-verben', day: 4, week: 1,
+    id: 'reflexive-verben', day: 12, week: 2,
     title: 'Reflexive Verben',
     tagline: 'The action points back at the subject: ich wasche mich, but ich wasche mir die Hände.',
     prompt: 'Pick a person and a verb. Switch to Dativ to add an object and watch the pronoun change for ich and du.',
@@ -719,7 +719,7 @@
   });
 
   // =====================================================================
-  // Week 5: Adjektivendungen
+  // Week 13 (A2): Adjektivendungen
   // =====================================================================
   const CASES = ['Nom', 'Akk', 'Dat', 'Gen'], CASE_DE = ['Nominativ', 'Akkusativ', 'Dativ', 'Genitiv'];
   const GENS = ['m', 'f', 'n', 'Pl'], GEN_DE = ['maskulin', 'feminin', 'neutral', 'Plural'];
@@ -744,7 +744,7 @@
   const endTable = type => table(['', 'm', 'f', 'n', 'Pl'], CASES.map((c, i) => [c, ...END[type][i].map((e, g) => { const p = phrase(type, i, g); return `${p.art ? p.art + ' ' : ''}${p.adj}<b class="${e === 'en' ? 'r-verb2' : 'hl'}">${e}</b>`; })]));
 
   MM.register({
-    id: 'adjektivendungen', day: 5, week: 1,
+    id: 'adjektivendungen', day: 13, week: 2,
     title: 'Adjektivendungen',
     tagline: 'The adjective ending depends on case, gender and the article in front; if the article already shows the gender, the adjective mostly takes -e or -en.',
     prompt: 'Pick an article type, then tap a pigeonhole (or use the case and gender chips). The lit block is the ending.',
@@ -895,7 +895,7 @@
   });
 
   // =====================================================================
-  // Week 6: Komparativ / Superlativ
+  // Week 14 (A2): Komparativ / Superlativ
   // =====================================================================
   const KS = {
     schnell: { f: ['schnell', 'schneller', 'am schnellsten'], s: ['Der Bus ist schnell.', 'Der Zug ist schneller als der Bus.', 'Das Flugzeug ist am schnellsten.'], kind: 'regular' },
@@ -918,7 +918,7 @@
   const STEPS = ['Positiv', 'Komparativ', 'Superlativ'];
 
   MM.register({
-    id: 'komparativ-superlativ', day: 6, week: 1,
+    id: 'komparativ-superlativ', day: 14, week: 2,
     title: 'Komparativ & Superlativ',
     tagline: 'schnell → schneller (als) → am schnellsten: add -er to compare two things, am …sten for the top.',
     prompt: 'Pick an adjective and watch the three chimneys rise. Tap a step to hear it in a sentence.',
@@ -1051,6 +1051,6 @@
       render(false);
     },
   });
-  // shared with scenes/phase2.js and phase3.js
+  // shared with scenes/a1.js, phase2.js and phase3.js
   window.GK = { kit, cap, attr, say, ex, table, R, gear, makeFigure };
 })();

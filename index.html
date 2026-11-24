@@ -2,9 +2,10 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>German in 3D</title>
-<meta name="description" content="German grammar from A2 to B1, one rule per week, each as a small painted 3D world with audio and a quiz.">
+<title>Akoo · German from A1 to B1</title>
+<meta name="description" content="Akoo: German from zero to B1, one rule per week, each a small painted 3D world with audio and a quiz. If a parrot can learn to talk, so can you.">
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A6%9C%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -195,13 +196,13 @@ main { display: grid; gap: 28px; min-width: 0; }
 <div class="shell" id="top">
   <aside>
     <div class="brand">
-      <span class="eyebrow">A2.2 → B1 · one rule a week</span>
-      <h1>German in 3D</h1>
-      <p>Each grammar rule is a small painted world you can poke at, with spoken examples and a five-question quiz.</p>
+      <span class="eyebrow">A1 → A2 → B1 · one rule a week</span>
+      <h1>Akoo</h1>
+      <p><i>Akoo</i> means parrot. If a parrot can learn to talk, so can you, with the right material and direction. Start from zero: each grammar rule is a small painted world you can poke at, with spoken examples and a five-question quiz.</p>
       <p class="legend" aria-label="Colour key for word blocks"><span style="background:var(--subj)">subject</span><span style="background:var(--verb)">verb</span><span style="background:var(--verb2)">2nd verb part</span><span style="background:var(--obj)">object</span><span style="background:var(--conn)">connector</span></p>
       <button type="button" class="btn ghost themebtn" id="themebtn">Daylight</button>
     </div>
-    <nav id="nav" aria-label="Grammar topics by week"></nav>
+    <nav id="nav" aria-label="Lessons by level and week"></nav>
   </aside>
   <main>
     <div class="head">
@@ -235,3 +236,5 @@ main { display: grid; gap: 28px; min-width: 0; }
 <script src="scenes/phase1.js"></script>
 <script src="scenes/phase2.js"></script>
 <script src="scenes/phase3.js"></script>
+<script src="scenes/start.js"></script>
+<script src="scenes/a1.js"></script>

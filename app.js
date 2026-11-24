@@ -1,9 +1,9 @@
-/* German in 3D hub: scene registry + shared Three.js engine (adapted from the Mental Models hub).
+/* Akoo: scene registry + shared Three.js engine for the A1 to B1 German path.
  *
  * SCENE CONTRACT (scenes/*.js call this):
  *   MM.register({
  *     id: 'nebensaetze',               // url hash, ascii-hyphen
- *     day: 1, week: 1,                 // day = study week number (sort + "Wk n"), week = phase group
+ *     day: 1, week: 1,                 // day = study week number (sort + "Wk n"; 0 = intro), week = level group (0 start, 1 A1, 2 A2, 3 B1)
  *     title: 'Nebensätze',
  *     tagline: 'One sentence: what the rule says.',
  *     prompt: 'Short instruction for the interactive, shown above the stage.',
@@ -523,14 +523,15 @@
 
   // ---------- nav + routing ----------
   const nav = document.getElementById('nav');
-  const WEEKS = { 1: 'Phase 1 · Finish A2', 2: 'Phase 2 · Early B1', 3: 'Phase 3 · B1 and exam polish' };
+  const WEEKS = { 0: "Start here", 1: "A1 · Beginner", 2: "A2 · Elementary", 3: "B1 · Intermediate" };
+  const wk = s => s.day ? `Wk ${s.day}` : "Intro";
 
   function buildNav() {
     scenes.sort((a, b) => a.day - b.day);
     let html = '';
     Object.keys(WEEKS).map(Number).forEach(w => {
       html += `<div class="wk"><span class="eyebrow">${WEEKS[w]}</span><ol>`;
-      scenes.filter(s => s.week === w).forEach(s => { html += `<li><a href="#${s.id}" data-id="${s.id}"><span class="d">Wk ${s.day}</span>${s.title}</a></li>`; });
+      scenes.filter(s => s.week === w).forEach(s => { html += `<li><a href="#${s.id}" data-id="${s.id}"><span class="d">${wk(s)}</span>${s.title}</a></li>`; });
       html += '</ol></div>';
     });
     nav.innerHTML = html;
@@ -549,8 +550,8 @@
     }
     unmount();
     current = { s };
-    document.title = `${s.title} · German in 3D`;
-    document.getElementById('day').textContent = `Week ${s.day} · ${WEEKS[s.week] || ''}`;
+    document.title = `${s.title} · Akoo`;
+    document.getElementById('day').textContent = s.day ? `Week ${s.day} · ${WEEKS[s.week] || ""}` : WEEKS[s.week];
     document.getElementById('title').textContent = s.title;
     document.getElementById('tagline').textContent = s.tagline;
     document.getElementById('prompt').textContent = s.prompt || '';
@@ -562,8 +563,8 @@
     const i = scenes.indexOf(s);
     const prev = scenes[i - 1], next = scenes[i + 1];
     document.getElementById('pager').innerHTML =
-      (prev ? `<a href="#${prev.id}">← Wk ${prev.day}: ${prev.title}</a>` : '<span></span>') +
-      (next ? `<a href="#${next.id}">Wk ${next.day}: ${next.title} →</a>` : '<span></span>');
+      (prev ? `<a href="#${prev.id}">← ${wk(prev)}: ${prev.title}</a>` : '<span></span>') +
+      (next ? `<a href="#${next.id}">${wk(next)}: ${next.title} →</a>` : '<span></span>');
     resize();
     try { current.handle = s.mount(ctx) || {}; }
     catch (e) { console.error(e); controls.innerHTML = '<p class="readout">This scene failed to load.</p>'; }

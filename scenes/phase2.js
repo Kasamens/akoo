@@ -1,6 +1,6 @@
-/* German in 3D, Phase 2 (weeks 7-14): early B1.
+/* Akoo, week 15 (end of A2) and weeks 16-22 (B1).
  * Uses the engine in app.js and the shared kit exported by phase1.js (window.GK).
- * Phase goal from the study plan: write a 100-word email giving an opinion and reasons.
+ * B1 writing goal: write a 100-word email giving an opinion and reasons.
  */
 (function () {
   'use strict';
@@ -95,10 +95,10 @@
   }
 
   // tag on top of the stage naming the rule that fired
-  const PH2_TRY = 'Phase 2 goal: a 100-word email giving an opinion and reasons.';
+  const PH2_TRY = 'B1 writing goal: a 100-word email giving an opinion and reasons.';
 
   // =====================================================================
-  // Week 7: als, wenn, bevor, nachdem
+  // Week 15 (A2): als, wenn, bevor, nachdem
   // =====================================================================
   const TS = {
     als: { label: 'als · einmal', sub: ['als', 'ich', [['in Wien', 'obj']], [['war', 'verb']]], main: ['ich', 'habe', [['viel Kaffee', 'obj']], [['getrunken', 'verb2']]],
@@ -116,7 +116,7 @@
   };
 
   MM.register({
-    id: 'als-wenn-bevor-nachdem', day: 7, week: 2,
+    id: 'als-wenn-bevor-nachdem', day: 15, week: 2,
     title: 'als, wenn, bevor, nachdem',
     tagline: 'Time clauses: als for one time in the past, wenn for every time or the future, bevor and nachdem for the order of events.',
     prompt: 'Pick a connector. The timeline shows when each clause happens; the row shows the verb going to the end.',
@@ -161,7 +161,7 @@
 <section>
   <div class="try">
     <h3>Schreiben: your first week in a new job or city</h3>
-    <p>${PH2_TRY} This week, write 6 sentences about a time you started something new, using each connector at least once:</p>
+    <p>A2 goal: tell a short story in the past without stopping. This week, write 6 sentences about a time you started something new, using each connector at least once:</p>
     <ul>
       <li>Als ich in … angefangen habe, …</li>
       <li>Wenn ich morgens ins Büro kam, …</li>
@@ -238,7 +238,7 @@
   });
 
   // =====================================================================
-  // Week 8: Relativsätze
+  // Week 16 (B1): Relativsätze
   // =====================================================================
   // token: [key, text in sentence 2, role, text as relative pronoun]
   const REL = {
@@ -262,7 +262,7 @@
   const RELP = { Nom: ['der', 'die', 'das', 'die'], Akk: ['den', 'die', 'das', 'die'], Dat: ['dem', 'der', 'dem', 'denen'], Gen: ['dessen', 'deren', 'dessen', 'deren'] };
 
   MM.register({
-    id: 'relativsaetze', day: 8, week: 2,
+    id: 'relativsaetze', day: 16, week: 3,
     title: 'Relativsätze',
     tagline: 'A relative clause describes a noun: the pronoun takes the noun’s gender and number, but its case comes from its own clause.',
     prompt: 'Pick a gender and a case, then join the two sentences. The repeated noun turns into the relative pronoun.',
@@ -355,7 +355,7 @@
   });
 
   // =====================================================================
-  // Week 9: Infinitiv mit zu, um … zu
+  // Week 17 (B1): Infinitiv mit zu, um … zu
   // =====================================================================
   const ZU = {
     zeit: { label: 'keine Zeit, … zu', en: 'I have no time to do sport.',
@@ -376,7 +376,7 @@
   };
 
   MM.register({
-    id: 'infinitiv-mit-zu', day: 9, week: 2,
+    id: 'infinitiv-mit-zu', day: 17, week: 3,
     title: 'Infinitiv mit zu',
     tagline: 'After many verbs and phrases, the second verb goes to the end with zu in front of it; um … zu says why you do something.',
     prompt: 'Pick a pattern and watch the press put zu in place. Press “Nochmal” to replay.',
@@ -465,7 +465,7 @@
   });
 
   // =====================================================================
-  // Week 10: Konjunktiv II
+  // Week 18 (B1): Konjunktiv II
   // =====================================================================
   const KII = {
     zeit: { label: 'Wunsch: Zeit', dream: true,
@@ -486,7 +486,7 @@
   };
 
   MM.register({
-    id: 'konjunktiv-2', day: 10, week: 2,
+    id: 'konjunktiv-2', day: 18, week: 3,
     title: 'Konjunktiv II',
     tagline: 'For wishes, unreal conditions, advice and polite requests: hätte, wäre, könnte, and würde + infinitive for most other verbs.',
     prompt: 'Pick a situation and switch from Wirklichkeit to Konjunktiv II. Wishes make the house dream bigger.',
@@ -587,7 +587,7 @@
   });
 
   // =====================================================================
-  // Week 11: Passiv Präsens und Präteritum
+  // Week 19 (B1): Passiv Präsens und Präteritum
   // =====================================================================
   const PAS = {
     drucker: { A: ['der Techniker', 'vom Techniker'], V: ['repariert', 'reparierte'], O: ['den Drucker', 'der Drucker'], P: 'repariert', en: ['The technician repairs the printer.', 'The printer is repaired (by the technician).'] },
@@ -597,7 +597,7 @@
   };
 
   MM.register({
-    id: 'passiv', day: 11, week: 2,
+    id: 'passiv', day: 19, week: 3,
     title: 'Passiv',
     tagline: 'The passive puts the thing that something happens to in the spotlight: werden + Partizip II, the doer is optional (von + Dativ).',
     prompt: 'Pick a sentence and switch Aktiv/Passiv. The spotlight follows the subject; the object steps forward and becomes Nominativ.',
@@ -693,7 +693,7 @@
   });
 
   // =====================================================================
-  // Week 12: Genitiv und wegen, trotz, während
+  // Week 20 (B1): Genitiv und wegen, trotz, während
   // =====================================================================
   const GEN = {
     streik: { P: 'wegen', nom: 'der', gen: 'des', N: 'Streik', E: 's', rest: [['fährt', 'verb'], ['heute', 'plain'], ['kein Zug', 'subj']], en: 'Because of the strike, no trains are running today.' },
@@ -706,7 +706,7 @@
   const GEN_MEAN = { wegen: 'because of (a reason)', trotz: 'despite (an obstacle that doesn’t stop it)', 'während': 'during (at the same time as)' };
 
   MM.register({
-    id: 'genitiv', day: 12, week: 2,
+    id: 'genitiv', day: 20, week: 3,
     title: 'Genitiv: wegen, trotz, während',
     tagline: 'The genitive shows belonging and follows wegen, trotz and während: des/der, and masculine and neuter nouns add -s or -es.',
     prompt: 'Pick a noun and switch to Genitiv. The press stamps the -s onto masculine and neuter nouns.',
@@ -799,7 +799,7 @@
   });
 
   // =====================================================================
-  // Week 13: Verben mit Präpositionen, da- und wo-Wörter
+  // Week 21 (B1): Verben mit Präpositionen, da- und wo-Wörter
   // =====================================================================
   const VP = {
     warten: { S: 'ich', V: 'warte', Vq: 'wartest', Sq: 'du', P: 'auf', kase: 'Akk', thing: 'den Bus', person: 'meine Kollegin', pron: 'sie', wo: 'worauf', da: 'darauf', wen: 'auf wen' },
@@ -811,7 +811,7 @@
   };
 
   MM.register({
-    id: 'verben-mit-praepositionen', day: 13, week: 2,
+    id: 'verben-mit-praepositionen', day: 21, week: 3,
     title: 'Verben mit Präpositionen',
     tagline: 'Many verbs come chained to a fixed preposition; ask with wo(r)- and answer with da(r)- for things, but use the preposition + wen/wem and a pronoun for people.',
     prompt: 'Pick a verb, choose a thing or a person, then step through Satz → Frage → kurze Antwort.',
@@ -917,7 +917,7 @@
   });
 
   // =====================================================================
-  // Week 14: Konnektoren: deshalb, trotzdem, obwohl, sondern (+ denn)
+  // Week 22 (B1): Konnektoren: deshalb, trotzdem, obwohl, sondern (+ denn)
   // =====================================================================
   const KON = {
     deshalb: { pos: 'Position 1 → Verb, Subjekt', mean: 'that’s why (a consequence)',
@@ -938,7 +938,7 @@
   };
 
   MM.register({
-    id: 'konnektoren', day: 14, week: 2,
+    id: 'konnektoren', day: 22, week: 3,
     title: 'Konnektoren',
     tagline: 'deshalb and trotzdem take position 1 (verb next), obwohl sends the verb to the end, and denn and sondern change nothing.',
     prompt: 'Pick a connector, then join the two sentences. Watch what happens to the verb in the second clause.',

@@ -1,14 +1,14 @@
-/* German in 3D, Phase 3 (weeks 15-16): B1 and exam polish.
+/* Akoo, B1 weeks 23-25: exam polish.
  * Uses the engine in app.js and the shared kits from phase1.js / phase2.js (window.GK).
- * Phase goal from the study plan: hold a 10-minute conversation and pass a B1 mock test.
+ * B1 speaking goal: hold a 10-minute conversation and pass a B1 mock test.
  */
 (function () {
   'use strict';
   const { kit, cap, say, ex, table, R, gear, makeFigure, stageRow, bench, arc } = window.GK;
-  const PH3_TRY = 'Phase 3 goal: a 10-minute conversation on everyday topics, and a B1 mock test.';
+  const PH3_TRY = 'B1 speaking goal: a 10-minute conversation on everyday topics, and a B1 mock test.';
 
   // =====================================================================
-  // Week 15: Zweiteilige Konnektoren
+  // Week 23 (B1): Zweiteilige Konnektoren
   // =====================================================================
   // lamps: [left, right] brightness 0..1; 'alt' alternates (either/or), 'grow' rises together (je … desto)
   const ZW = {
@@ -27,7 +27,7 @@
   };
 
   MM.register({
-    id: 'zweiteilige-konnektoren', day: 15, week: 3,
+    id: 'zweiteilige-konnektoren', day: 23, week: 3,
     title: 'Zweiteilige Konnektoren',
     tagline: 'Two-part connectors link two items or ideas: entweder … oder, weder … noch, sowohl … als auch, nicht nur … sondern auch, zwar … aber, je … desto.',
     prompt: 'Pick a pair. The arc links its two halves, and the two lamps show what the pair means: one, neither, both, or growing together.',
@@ -138,7 +138,7 @@
   });
 
   // =====================================================================
-  // Week 16a: Plusquamperfekt
+  // Week 24 (B1): Plusquamperfekt
   // =====================================================================
   const PQ = {
     bahnhof: { label: 'Zug schon weg', early: 'Zug fährt ab', late: 'ich komme an', pq: ['W', 'P'],
@@ -159,7 +159,7 @@
   };
 
   MM.register({
-    id: 'plusquamperfekt', day: 16, week: 3,
+    id: 'plusquamperfekt', day: 24, week: 3,
     title: 'Plusquamperfekt',
     tagline: 'The past before the past: hatte or war + Partizip II, for something that had already happened before another past event.',
     prompt: 'Pick a sentence. The timeline shows the earlier event (Plusquamperfekt) and the later one (Präteritum).',
@@ -247,7 +247,7 @@
   });
 
   // =====================================================================
-  // Week 16b: n-Deklination
+  // Week 25 (B1): n-Deklination
   // =====================================================================
   const ND = [
     { v: 'Kollege', e: 'n' }, { v: 'Kunde', e: 'n' }, { v: 'Nachbar', e: 'n' },
@@ -262,7 +262,7 @@
   const N_EN = { Kollege: 'colleague', Kunde: 'customer', Nachbar: 'neighbour', Student: 'student', Tourist: 'tourist', Herr: 'gentleman' };
 
   MM.register({
-    id: 'n-deklination', day: 16, week: 3,
+    id: 'n-deklination', day: 25, week: 3,
     title: 'n-Deklination',
     tagline: 'A group of masculine nouns, mostly people and animals, add -n or -en in every case except the nominative singular.',
     prompt: 'Pick a noun and a case. In every case except Nominativ, the ending block docks onto the noun.',
