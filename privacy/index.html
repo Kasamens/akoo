@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<title>Privacy · Akoo</title>
+<meta name="description" content="What Akoo stores and what happens to feedback you send.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A6%9C%3C/text%3E%3C/svg%3E">
+<script>
+try { const t = (JSON.parse(localStorage.getItem('akoo:prefs')) || {}).theme; if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+.page { max-width: 720px; margin: 0 auto; padding: calc(40px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px)); display: grid; gap: 22px; }
+.page h1 { font-size: clamp(3rem, 10vw, 4.6rem); }
+.page h2 { font-size: 1.8rem; margin-top: 10px; }
+.page p, .page li { line-height: 1.6; }
+.page ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.page a { color: var(--warm); }
+.back { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+</style>
+
+<main class="page">
+  <a class="back" href="../">← Akoo</a>
+  <header><span class="eyebrow">Plain-language privacy</span><h1>Privacy</h1></header>
+  <p>Akoo has no accounts, no ads and no tracking. Here is everything it keeps, and where.</p>
+
+  <h2>Your progress</h2>
+  <p>Finished lessons, quiz scores, your last lesson and your Daylight/Dusk choice are saved <strong>only in your browser</strong> (local storage). They are never sent to us. You can back them up, restore them or delete them from <em>Your progress</em> in the lessons menu.</p>
+
+  <h2>Feedback you send</h2>
+  <p>When you use <em>Squawk at us</em>, we receive:</p>
+  <ul>
+    <li>the kind of feedback and your message;</li>
+    <li>the course and lesson you were on;</li>
+    <li>your device type (phone, tablet or laptop), browser and system name, light or dark theme, and the time;</li>
+    <li>your name, <strong>only</strong> if you tick “Add my name to the Thanks page”;</li>
+    <li>how many lessons you've finished, <strong>only</strong> if you tick that box.</li>
+  </ul>
+  <p>We never ask for your email address, and we don't collect your IP address or any other identifier. Please don't put personal details in your message.</p>
+
+  <h2>Where it goes, and why</h2>
+  <p>Feedback is emailed to Akoo's own mailbox (a Google Gmail account) through a small Google Apps Script. We copy it into a private feedback log, which we use with the help of Claude, an AI assistant, to sort and track what to fix. We use feedback only to improve Akoo. We don't sell it, share it or use it for marketing.</p>
+
+  <h2>The Thanks page</h2>
+  <p>If your feedback leads to a change, it may appear on the <a href="../thanks/">Thanks page</a>. Your name appears there only if you chose to add it. Otherwise the card shows only your feedback number.</p>
+
+  <h2>How long we keep it</h2>
+  <ul>
+    <li>Feedback messages: up to 24 months, then deleted.</li>
+    <li>Names on the Thanks page: for as long as the card is shown, or until you ask us to remove them.</li>
+  </ul>
+
+  <h2>Your choices</h2>
+  <p>To have your name removed from the Thanks page, or your feedback deleted, email <a href="mailto:akoobird@gmail.com">akoobird@gmail.com</a> and include your feedback number (for example AK-0042). We'll do it promptly.</p>
+  <p class="muted">We follow the principles of the EU GDPR and Ghana's Data Protection Act, 2012 (Act 843): consent, collecting as little as possible, and deleting on request. Last updated 25 November 2026.</p>
+</main>
+<script src="../shared/feedback.js"></script>

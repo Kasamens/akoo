@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<title>Thanks to learners · Akoo</title>
+<meta name="description" content="Fixes and improvements to Akoo that came from learners' feedback.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A6%9C%3C/text%3E%3C/svg%3E">
+<script>
+try { const t = (JSON.parse(localStorage.getItem('akoo:prefs')) || {}).theme; if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+.page { max-width: 880px; margin: 0 auto; padding: calc(40px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px)); display: grid; gap: 24px; }
+.page h1 { font-size: clamp(3rem, 10vw, 5rem); }
+.page .lede { font-size: 1.1rem; max-width: 62ch; }
+.back { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+.back:hover { color: var(--warm); }
+.flock { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; padding: 0; margin: 0; list-style: none; }
+.fix { position: relative; display: grid; gap: 8px; padding: 18px 18px 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.fix::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 10px; height: 5px; border-radius: 3px; background: var(--wood); opacity: .8; } /* the perch */
+.fix .meta { font: 0.72rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fix .what { font-size: 0.98rem; }
+.fix .who { color: var(--good); font-weight: 600; font-size: 0.92rem; }
+.fix .who .bird { margin-right: 6px; }
+.empty { padding: 26px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); display: grid; gap: 10px; justify-items: start; }
+.foot { display: flex; flex-wrap: wrap; gap: 14px 22px; color: var(--muted); font-size: 0.9rem; }
+.foot a, .foot .fb-link { color: var(--accent); font-weight: 600; text-decoration: none; }
+</style>
+
+<main class="page">
+  <a class="back" href="../">← Akoo</a>
+  <header>
+    <span class="eyebrow">The flock wall</span>
+    <h1>Thanks to learners</h1>
+  </header>
+  <p class="lede">Parrots learn from their flock, and so does Akoo. Every card here is a fix or improvement that started with someone's feedback. If you sent feedback, look for your feedback number (like AK-0042) or your name.</p>
+  <ul class="flock" id="flock" aria-live="polite"></ul>
+  <p class="foot"><span>Found something to fix?</span><span data-fb-slot></span><a href="../privacy/">How we handle feedback</a></p>
+</main>
+
+<script>
+(function () {
+  const list = document.getElementById('flock');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const COURSE = { de: '🇩🇪 German', fr: '🇫🇷 French', site: 'Whole site' };
+  const date = d => { try { return new Date(d + 'T12:00:00Z').toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return d; } };
+  const empty = msg => { list.outerHTML = '<div class="empty"><p>' + msg + '</p></div>'; };
+  fetch('../shared/thanks.json', { cache: 'no-cache' })
+    .then(r => r.json())
+    .then(d => {
+      const items = (d.entries || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      if (!items.length) { empty('No fixes on the wall yet. The flock is waiting for its first squawk. Send us feedback and your fix could be first.'); return; }
+      list.innerHTML = items.map(e => '<li class="fix">' +
+        '<span class="meta">' + esc(date(e.date)) + ' · ' + esc(COURSE[e.course] || e.course) + (e.lesson ? ' · ' + esc(e.lesson) : '') + '</span>' +
+        '<p class="what">' + esc(e.change) + '</p>' +
+        '<p class="who"><span class="bird" aria-hidden="true">🦜</span>Thanks to ' + (e.name ? esc(e.name) : 'learner ' + esc(e.id)) + '</p>' +
+        '</li>').join('');
+    })
+    .catch(() => empty("The thanks list couldn't load right now. Please try again later."));
+})();
+</script>
+<script src="../shared/feedback.js"></script>
