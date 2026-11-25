@@ -542,16 +542,18 @@
     paintProgress();
   }
 
-  // ✓ = finished (quiz 4/5+), • = opened but not finished; level headings show "finished / total"
+  // ✓ = finished (quiz 4/5+), • = quiz tried but not passed yet (just opening a lesson shows nothing); level headings show "finished / total"
   function paintProgress() {
     const P = window.AkooProgress; if (!P) return;
     nav.querySelectorAll('a[data-id]').forEach(a => {
-      const l = P.lesson(a.dataset.id), done = !!(l && l.done), seen = !!(l && l.seen);
+      const l = P.lesson(a.dataset.id), done = !!(l && l.done), tried = !!(l && l.tries);
       a.classList.toggle('is-done', done);
-      a.classList.toggle('is-started', seen && !done);
-      a.querySelector('.mk').textContent = done ? '✓' : seen ? '•' : '';
-      const t = a.querySelector('.t').textContent;
-      a.setAttribute('aria-label', `${a.querySelector('.d').textContent} ${t}${done ? ', finished' : seen ? ', started' : ''}`);
+      a.classList.toggle('is-started', tried && !done);
+      const mk = a.querySelector('.mk');
+      mk.textContent = done ? '✓' : tried ? '•' : '';
+      const note = done ? `finished, best ${l.best}/5` : tried ? `quiz tried, best ${l.best}/5` : '';
+      a.title = note ? note[0].toUpperCase() + note.slice(1) : '';
+      a.setAttribute('aria-label', `${a.querySelector('.d').textContent} ${a.querySelector('.t').textContent}${note ? ', ' + note : ''}`);
     });
     nav.querySelectorAll('.wk[data-week]').forEach(w => {
       const cnt = w.querySelector('.cnt'), links = w.querySelectorAll('a[data-id]');
