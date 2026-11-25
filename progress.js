@@ -57,7 +57,142 @@
     },
     theme: () => data.prefs.theme || null,
     setTheme(t) { data.prefs.theme = t; save(); },
+    exportCode,
+    importCode,
+    reset() { const theme = data.prefs.theme; data = blank(); if (theme) data.prefs.theme = theme; save(); },
+    count: () => Object.values(data.lessons).filter(l => l.done).length,
   };
+
+  // ---------- export / import ----------
+  // Code format: AKOO1-<base64url(JSON)>-<4 hex checksum>. The checksum catches typos and cut-off pastes.
+  function sum(str) { // FNV-1a, folded to 16 bits
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return ((h >>> 16) ^ (h & 0xffff)).toString(16).padStart(4, '0').toUpperCase();
+  }
+  const toB64 = str => btoa(String.fromCharCode(...new TextEncoder().encode(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const fromB64 = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)));
+
+  function exportCode() {
+    const { v, created, last, lessons, review } = data; // the theme choice stays with each device
+    const body = toB64(JSON.stringify({ v, created, last, lessons, review }));
+    return `AKOO1-${body}-${sum(body)}`;
+  }
+
+  const earliest = (a, b) => (!a ? b : !b ? a : a < b ? a : b);
+
+  // Keeps the better of what's here and what's in the code, so an old backup never erases newer progress.
+  function importCode(text) {
+    const m = String(text || '').replace(/\s+/g, '').match(/AKOO1-([A-Za-z0-9_-]+)-([0-9A-Fa-f]{4})/);
+    if (!m) return { ok: false, error: "That doesn't look like an Akoo progress code. It should start with AKOO1-." };
+    if (sum(m[1]) !== m[2].toUpperCase()) return { ok: false, error: 'This code is incomplete or has a typo. Copy it again and paste the whole thing.' };
+    let inc;
+    try { inc = JSON.parse(fromB64(m[1])); } catch (e) { return { ok: false, error: "This code couldn't be read. Copy it again and paste the whole thing." }; }
+    if (!inc || inc.v !== 1 || typeof inc.lessons !== 'object') return { ok: false, error: 'This code is from a newer or unknown version of Akoo.' };
+    let added = 0;
+    for (const [id, l] of Object.entries(inc.lessons || {})) {
+      if (!/^[a-z0-9-]+$/.test(id) || !l || typeof l !== 'object') continue;
+      const cur = lesson(id), wasDone = !!cur.done;
+      if (l.seen) cur.seen = earliest(cur.seen, String(l.seen).slice(0, 10));
+      if (l.done) cur.done = earliest(cur.done, String(l.done).slice(0, 10));
+      if (+l.best) cur.best = Math.max(cur.best || 0, Math.min(+l.best, 99));
+      if (+l.tries) cur.tries = Math.max(cur.tries || 0, Math.min(+l.tries, 9999));
+      if (cur.done && !wasDone) added++;
+    }
+    if (inc.last && inc.last.id && (!data.last || inc.last.at > data.last.at)) data.last = { id: String(inc.last.id), at: String(inc.last.at) };
+    if (inc.created) data.created = earliest(data.created, String(inc.created).slice(0, 10));
+    if (Array.isArray(inc.review)) {
+      const key = r => `${r.lesson}#${r.q}`, have = new Set(data.review.map(key));
+      inc.review.forEach(r => { if (r && r.lesson && !have.has(key(r))) data.review.push(r); });
+    }
+    save();
+    return { ok: true, added, total: Object.values(data.lessons).filter(l => l.done).length };
+  }
+
+
+  // ---------- "Your progress" panel in the sidebar ----------
+  document.addEventListener('DOMContentLoaded', () => {
+    const sumEl = document.getElementById('progsum'), panel = document.getElementById('progpanel'), msg = document.getElementById('progmsg');
+    if (!sumEl) return;
+    const btns = [...document.querySelectorAll('[data-prog]')];
+    const P = window.AkooProgress;
+    const say = (text, kind) => { msg.textContent = text; msg.className = 'progmsg' + (kind ? ' ' + kind : ''); };
+    const lessonsWord = n => `${n} lesson${n === 1 ? '' : 's'}`;
+    const summary = () => {
+      if (!ok) { sumEl.textContent = "Progress can't be saved in this window (private browsing or storage turned off)."; return; }
+      const n = P.count();
+      sumEl.textContent = n ? `${lessonsWord(n)} finished, saved in this browser only.` : 'Saved in this browser only. Finish a quiz with 4/5 or better to tick off a lesson.';
+    };
+    P.onChange(summary); summary();
+    if (!ok) btns.forEach(b => { if (b.dataset.prog !== 'import') b.disabled = true; });
+
+    let open = null;
+    const close = () => { panel.innerHTML = ''; open = null; btns.forEach(b => b.setAttribute('aria-expanded', 'false')); };
+    btns.forEach(b => b.setAttribute('aria-expanded', 'false'));
+
+    function copy(text, ta) {
+      const done = () => say('Code copied. Paste it somewhere safe, like a note or an email to yourself.', 'ok');
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, () => { ta.select(); say('Select the code above and copy it.', ''); });
+      else { ta.select(); try { document.execCommand('copy'); done(); } catch (e) { say('Select the code above and copy it.', ''); } }
+    }
+
+    const views = {
+      export() {
+        const code = P.exportCode();
+        panel.innerHTML = `<p>Your progress code. Keep it somewhere safe, or paste it into Akoo on another phone or browser.</p>
+          <textarea readonly aria-label="Your progress code"></textarea>
+          <div class="row"><button type="button" class="btn" data-a="copy">Copy code</button><button type="button" class="btn ghost" data-a="file">Download file</button></div>`;
+        const ta = panel.querySelector('textarea'); ta.value = code;
+        ta.addEventListener('focus', () => ta.select());
+        panel.querySelector('[data-a="copy"]').addEventListener('click', () => copy(code, ta));
+        panel.querySelector('[data-a="file"]').addEventListener('click', () => {
+          const date = new Date().toISOString().slice(0, 10);
+          const text = `Akoo progress backup (${date})\nTo restore: open Akoo, choose Your progress > Restore, then choose this file or paste the code below.\n\n${code}\n`;
+          const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+          const a = Object.assign(document.createElement('a'), { href: url, download: `akoo-progress-${date}.txt` });
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          say('Backup file downloaded.', 'ok');
+        });
+        return ta;
+      },
+      import() {
+        panel.innerHTML = `<p>Paste a progress code, or choose a backup file. Nothing is lost: for each lesson Akoo keeps the better result.</p>
+          <textarea aria-label="Paste a progress code" placeholder="AKOO1-…"></textarea>
+          <div class="row"><button type="button" class="btn" data-a="go">Restore</button><button type="button" class="btn ghost" data-a="pick">Choose file…</button></div>
+          <input type="file" accept=".txt,text/plain" hidden>`;
+        const ta = panel.querySelector('textarea'), file = panel.querySelector('input[type=file]');
+        const run = text => {
+          if (!ok) { say("Progress can't be saved in this window, so it can't be restored here.", 'err'); return; }
+          const r = P.importCode(text);
+          if (!r.ok) { say(r.error, 'err'); return; }
+          close();
+          say(r.added ? `Restored. ${lessonsWord(r.added)} added; ${r.total} finished in total.` : `Restored. Nothing new to add; ${r.total} finished in total.`, 'ok');
+        };
+        panel.querySelector('[data-a="go"]').addEventListener('click', () => run(ta.value));
+        panel.querySelector('[data-a="pick"]').addEventListener('click', () => file.click());
+        file.addEventListener('change', () => { const f = file.files[0]; if (f) f.text().then(run); });
+        return ta;
+      },
+      reset() {
+        const n = P.count();
+        panel.innerHTML = `<p>Delete all saved progress in this browser${n ? ` (${lessonsWord(n)} finished)` : ''}? This can't be undone. Back up first if you might want it later.</p>
+          <div class="row"><button type="button" class="btn danger" data-a="yes">Yes, reset</button><button type="button" class="btn ghost" data-a="no">Cancel</button></div>`;
+        panel.querySelector('[data-a="yes"]').addEventListener('click', () => { P.reset(); close(); say('Progress reset.', 'ok'); });
+        panel.querySelector('[data-a="no"]').addEventListener('click', () => { const b = btns.find(x => x.dataset.prog === 'reset'); close(); say('', ''); b.focus(); });
+        return panel.querySelector('[data-a="no"]');
+      },
+    };
+
+    btns.forEach(b => b.addEventListener('click', () => {
+      const which = b.dataset.prog;
+      say('', '');
+      if (open === which) { close(); return; }
+      close(); open = which; b.setAttribute('aria-expanded', 'true');
+      const focusEl = views[which]();
+      if (focusEl) focusEl.focus({ preventScroll: true });
+    }));
+  });
 
   const t = data.prefs.theme;
   if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;

@@ -83,6 +83,21 @@ aside { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); displ
 .wk a.is-started .mk { color: var(--muted); }
 .wk a[aria-current="page"] .mk { color: inherit; opacity: .75; }
 .wk .cnt { color: var(--good); }
+.prog { display: grid; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+.progsum { font-size: 0.85rem; color: var(--muted); }
+.progbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.progbtns .btn, #progpanel .btn { padding: 6px 11px; font-size: 0.8rem; }
+.progbtns .btn[aria-expanded="true"] { border-color: var(--warm); color: var(--warm); }
+#progpanel:empty { display: none; }
+#progpanel { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+#progpanel p { font-size: 0.82rem; color: var(--muted); }
+#progpanel textarea { width: 100%; min-height: 76px; resize: vertical; font: 0.72rem/1.4 var(--font-mono); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; word-break: break-all; }
+#progpanel .row { display: flex; flex-wrap: wrap; gap: 6px; }
+#progpanel .btn.danger { background: var(--bad); color: #fff7f0; }
+.progmsg { font-size: 0.82rem; }
+.progmsg:empty { display: none; }
+.progmsg.ok { color: var(--good); }
+.progmsg.err { color: var(--bad); }
 .best { font-size: 0.85rem; color: var(--muted); flex-basis: 100%; order: 3; }
 .best:empty { display: none; }
 .continue { margin-top: 14px; }
@@ -247,6 +262,17 @@ main { display: grid; gap: 28px; min-width: 0; }
       <button type="button" class="btn ghost themebtn" id="themebtn">Daylight</button>
     </div>
     <nav id="nav" aria-label="Lessons by level and week"></nav>
+    <section class="prog" aria-labelledby="progh">
+      <h3 class="eyebrow" id="progh">Your progress</h3>
+      <p class="progsum" id="progsum"></p>
+      <div class="progbtns">
+        <button type="button" class="btn ghost" data-prog="export">Back up</button>
+        <button type="button" class="btn ghost" data-prog="import">Restore</button>
+        <button type="button" class="btn ghost" data-prog="reset">Reset</button>
+      </div>
+      <div id="progpanel"></div>
+      <p class="progmsg" id="progmsg" role="status" aria-live="polite"></p>
+    </section>
   </aside>
   <main>
     <div class="head">
