@@ -421,9 +421,11 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const gap = s => esc(s).replace(/___/g, '<span class="gap" aria-label="Lücke">&nbsp;&nbsp;&nbsp;&nbsp;</span>');
   function shuffle(a, seed) { a = a.slice(); let x = seed || 7; for (let i = a.length - 1; i > 0; i--) { x = (x * 9301 + 49297) % 233280; const j = Math.floor(x / 233280 * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  // quiz wording comes from the course config (AKOO.ui.quiz), defaulting to German
+  const QZ = Object.assign({ correct: 'richtig', perfect: 'perfekt!', again: 'Nochmal', right: 'Richtig.', wrong: 'Nicht ganz.', check: 'Prüfen', undo: 'Zurück' }, (CFG.ui && CFG.ui.quiz) || {});
   function quiz(el, qs, lessonId) {
     let score = 0, done = 0;
-    el.innerHTML = `<ol class="quiz"></ol><div class="qfoot"><p class="score" aria-live="polite">0 / ${qs.length} richtig</p><p class="best"></p><button type="button" class="btn ghost qreset">Nochmal</button></div>`;
+    el.innerHTML = `<ol class="quiz"></ol><div class="qfoot"><p class="score" aria-live="polite">0 / ${qs.length} ${QZ.correct}</p><p class="best"></p><button type="button" class="btn ghost qreset">${QZ.again}</button></div>`;
     const ol = el.querySelector('.quiz'), scoreEl = el.querySelector('.score'), bestEl = el.querySelector('.best');
     el.querySelector('.qreset').addEventListener('click', () => quiz(el, qs, lessonId));
     const P = lessonId && window.AkooProgress;
@@ -434,9 +436,9 @@
       li.classList.add(ok ? 'right' : 'wrong');
       if (ok && !reduce) { li.classList.remove('splash'); void li.offsetWidth; li.classList.add('splash'); }
       const why = li.querySelector('.why');
-      why.innerHTML = `<strong>${ok ? 'Richtig.' : 'Nicht ganz.'}</strong> ${q.why}`;
+      why.innerHTML = `<strong>${ok ? QZ.right : QZ.wrong}</strong> ${q.why}`;
       why.hidden = false;
-      scoreEl.textContent = `${score} / ${qs.length} richtig` + (done === qs.length ? (score === qs.length ? ' · perfekt!' : ' · try again with “Nochmal”') : '');
+      scoreEl.textContent = `${score} / ${qs.length} ${QZ.correct}` + (done === qs.length ? (score === qs.length ? ` · ${QZ.perfect}` : ` · try again with “${QZ.again}”`) : '');
       if (P && done === qs.length) showBest(P.quiz(lessonId, score));
     };
     qs.forEach((q, qi) => {
@@ -447,8 +449,8 @@
         const built = document.createElement('div'); built.className = 'built'; built.setAttribute('aria-label', 'Your sentence');
         const pool = document.createElement('div'); pool.className = 'pool';
         const row = document.createElement('div'); row.className = 'qrow';
-        const check = Object.assign(document.createElement('button'), { type: 'button', className: 'btn', textContent: 'Prüfen' });
-        const clear = Object.assign(document.createElement('button'), { type: 'button', className: 'btn ghost', textContent: 'Zurück' });
+        const check = Object.assign(document.createElement('button'), { type: 'button', className: 'btn', textContent: QZ.check });
+        const clear = Object.assign(document.createElement('button'), { type: 'button', className: 'btn ghost', textContent: QZ.undo });
         let locked = false;
         let tiles = shuffle(q.tiles, qi * 31 + q.tiles.length);
         if (tiles.join(' ') === [].concat(q.a)[0]) tiles = tiles.slice(1).concat(tiles[0]);
