@@ -572,7 +572,16 @@
     resize();
   }
 
-  window.addEventListener('hashchange', () => { show(location.hash.slice(1)); document.getElementById('top').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); });
+  // #lesson or #lesson/section-id (deep link to a section inside a lesson's page)
+  function route(smooth) {
+    const [id, anchor] = decodeURIComponent(location.hash.slice(1)).split('/');
+    if (!(anchor && current && current.s.id === id)) show(id);
+    const target = (anchor && document.getElementById(anchor)) || document.getElementById('top');
+    requestAnimationFrame(() => target.scrollIntoView({ behavior: smooth && !reduce ? 'smooth' : 'auto', block: 'start' }));
+  }
+  window.addEventListener('hashchange', () => route(true));
+  // same-hash clicks fire no hashchange: re-run the route so the link still scrolls
+  document.addEventListener('click', e => { const l = e.target.closest('a[href^="#"]'); if (l && l.getAttribute('href') === location.hash) { e.preventDefault(); route(true); } });
 
   // theme
   function themeChanged() { readColors(); retheme(); themeFns.forEach(f => f()); }
@@ -602,7 +611,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     addLights(scene);
     buildNav();
-    show(location.hash.slice(1));
+    route(false);
     requestAnimationFrame(frame);
   });
 })();
