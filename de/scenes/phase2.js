@@ -1,98 +1,10 @@
 /* Akoo, week 15 (end of A2) and weeks 16-22 (B1).
- * Uses the engine in app.js and the shared kit exported by phase1.js (window.GK).
+ * Uses the engine in app.js and the shared kit in shared/kit.js (window.GK).
  * B1 writing goal: write a 100-word email giving an opinion and reasons.
  */
 (function () {
   'use strict';
-  const { kit, cap, say, ex, table, R, gear, makeFigure } = window.GK;
-
-  // ---------- shared phase 2/3 helpers ----------
-  // A sentence row that animates when only the order/text changes, and rebuilds when the set of blocks changes.
-  function stageRow(ctx, K, o) {
-    o = o || {};
-    let row = null, sig = '';
-    const api = { size: { w: 1, h: 1 }, keys: [] };
-    api.show = (tokens, keys, opt) => {
-      opt = opt || {};
-      const s = tokens.map(t => t[0]).join('|');
-      let snap = !!opt.snap;
-      if (s !== sig) {
-        if (row) {
-          ctx.scene.remove(row.root);
-          row.root.traverse(x => { if (x.geometry) x.geometry.dispose(); if (x.material && !Array.isArray(x.material)) { if (x.material.map) x.material.map.dispose(); x.material.dispose(); } });
-        }
-        row = ctx.words(tokens); sig = s; snap = true;
-        if (o.pos) row.root.position.copy(o.pos);
-      }
-      api.row = row;
-      const text = {}, roles = {};
-      tokens.forEach(([k, t, r]) => { text[k] = t; roles[k] = r; });
-      Object.assign(text, opt.text || {}); Object.assign(roles, opt.roles || {});
-      api.keys = keys || tokens.map(t => t[0]); api.tight = opt.tight || [];
-      api.size = row.arrange(api.keys, { text, roles, maxW: ctx.portrait ? (o.maxP || 6.6) : (o.maxW || 30), snap, tight: opt.tight, cap: opt.cap });
-      api.lines = Math.max(1, Math.round(api.size.h / 1.25));
-      return api.size;
-    };
-    api.b = k => row.blocks[k];
-    api.sentence = () => api.keys.reduce((s, k) => { const b = row.blocks[k]; return s + ((b.role === 'punct' || api.tight.includes(k)) ? '' : (s ? ' ' : '')) + b.word; }, '');
-    // world-space target position of a block (no need to wait for the spring)
-    api.at = k => row.root.position.clone().add(row.blocks[k].st.tp);
-    api.pop = (keys, delay) => K.after(delay == null ? 0.32 : delay, () => keys.forEach(k => { if (row.blocks[k] && api.keys.includes(k)) ctx.pop(row.blocks[k]); }));
-    return api;
-  }
-
-  // a wooden bench under a row (resized to the row)
-  function bench(ctx, K) {
-    const top = K.at(K.box(8, 0.3, 1.6, 'wood'), 0, -0.65, 0);
-    const rail = K.at(K.box(8, 0.08, 0.1, 'brass', { ink: 0.6 }), 0, -0.48, 0.82);
-    return (size, lines, base) => {
-      base = base || K.V();
-      K.resize(top, size.w + 1.2, 0.3, 1.6); top.position.set(base.x, base.y - (lines - 1) * 1.25 - 0.65, base.z);
-      K.resize(rail, size.w + 1.2, 0.08, 0.1); rail.position.set(base.x, top.position.y + 0.17, base.z + 0.82);
-    };
-  }
-
-  // a glowing painted arc (tube) between two points; returns { set(a, b, h), hide() }
-  function arc(ctx, K, key) {
-    const T = K.T;
-    const mat = new T.MeshBasicMaterial({ color: ctx.colors[key || 'accent'].clone(), transparent: true, opacity: 0.85 });
-    mat.userData.key = key || 'accent';
-    let mesh = null;
-    const api = {
-      set(a, b, h) {
-        api.hide();
-        const mid = a.clone().add(b).multiplyScalar(0.5); mid.y += h == null ? 1.1 : h;
-        const curve = new T.QuadraticBezierCurve3(a, mid, b);
-        mesh = new T.Mesh(new T.TubeGeometry(curve, 32, 0.045, 6, false), mat);
-        ctx.scene.add(mesh);
-        if (!ctx.reduce) { mesh.scale.setScalar(0.001); let k = 0; ctx.onFrame(dt => { if (!mesh || k >= 1) return; k = Math.min(1, k + dt / 0.35); const q = Math.round(k * 6) / 6; mesh.scale.setScalar(Math.max(0.001, q)); mesh.position.copy(mid).multiplyScalar(1 - q); }); }
-      },
-      hide() { if (mesh) { ctx.scene.remove(mesh); mesh.geometry.dispose(); mesh = null; } },
-    };
-    return api;
-  }
-
-  // a brass piston that stamps down onto a point ("the rule presses something in")
-  function piston(ctx, K) {
-    const T = K.T, g = new T.Group();
-    K.at(K.cyl(0.08, 0.08, 3, 'brass', 10), 0, 1.9, 0, g);
-    K.at(K.cyl(0.32, 0.32, 0.4, 'copper', 18), 0, 0.2, 0, g);
-    K.at(K.box(0.7, 0.12, 0.5, 'brass'), 0, 0, 0, g);
-    ctx.scene.add(g);
-    const st = { x: 0, y: 3, tx: 0, ty: 3, hit: 0 };
-    g.position.set(0, 3, 0);
-    ctx.onFrame((dt, t) => {
-      st.x += (st.tx - st.x) * K.f(dt, 7);
-      if (st.hit > 0) { st.hit -= dt; }
-      const dy = st.hit > 0 ? Math.sin((1 - st.hit / 0.45) * Math.PI) * -0.9 : 0;
-      if (ctx.reduce || Math.floor(t * 12) !== Math.floor((t - dt) * 12)) g.position.set(st.x, st.ty + dy, st.z || 0);
-    });
-    return {
-      group: g,
-      park(x, y, z) { st.tx = x; st.ty = y; st.z = z || 0; },
-      strike(x, y, z) { st.tx = x; st.ty = y + 1.15; st.z = z || 0; if (!ctx.reduce) st.hit = 0.45; },
-    };
-  }
+  const { kit, cap, say, ex, table, R, gear, makeFigure, stageRow, bench, arc, piston } = window.GK;
 
   // tag on top of the stage naming the rule that fired
   const PH2_TRY = 'B1 writing goal: a 100-word email giving an opinion and reasons.';
@@ -1018,5 +930,4 @@
     },
   });
 
-  window.GK.stageRow = stageRow; window.GK.bench = bench; window.GK.arc = arc; window.GK.piston = piston;
 })();

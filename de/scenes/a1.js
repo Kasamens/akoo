@@ -1,39 +1,13 @@
 /* Akoo, level A1 (weeks 1-8): German from zero, one rule a week, as painted 3D worlds.
- * Uses the engine in app.js and the shared kits from phase1.js / phase2.js (window.GK; stageRow and bench are read at mount time).
+ * Uses the engine in app.js and the shared kit in shared/kit.js (window.GK).
  * A1 goal: introduce yourself and talk about your day, family and shopping in short, simple sentences.
  * All example sentences are original.
  */
 (function () {
   'use strict';
-  const { say, ex, table, R } = window.GK;
+  const { say, ex, table, R, chipScene } = window.GK;
   const A1_TRY = 'A1 goal: introduce yourself and talk about your day in short, simple sentences.';
 
-  // One sentence row on a bench, driven by chips. cfg.build(state) -> { tokens, keys, text?, roles?, tag, pop?, en?, note }
-  function chipScene(ctx, cfg) {
-    const { kit, stageRow, bench } = window.GK;
-    const K = kit(ctx);
-    ctx.backdrop({ center: K.V(0, 0, -2) });
-    const S = stageRow(ctx, K, { pos: K.V(0, 0, 0) });
-    const fitBench = bench(ctx, K);
-    const tag = K.tag('', K.V(0, 1.4, 0), 'q');
-    const st = Object.assign({}, cfg.state);
-    let first = true;
-    const out = K.readout();
-    function render() {
-      const b = cfg.build(st);
-      const size = S.show(b.tokens, b.keys, { snap: first, text: b.text, roles: b.roles, cap: b.cap, tight: b.tight });
-      fitBench(size, S.lines);
-      ctx.fit(Math.max(9, size.w + 2), 4.4 + size.h, K.V(0, 0.6 - (S.lines - 1) * 0.62, 0), K.V(0, 0.3, 1));
-      tag.set(b.tag || '');
-      if (!first && b.pop) S.pop(b.pop);
-      first = false;
-      const s = S.sentence();
-      out.innerHTML = `<span class="de">${s}</span> ${say(s)}${b.en ? ` <span>· ${b.en}</span>` : ''}<br>${b.note || ''}`;
-    }
-    cfg.chips.forEach(c => K.chips(c.label, c.opts, st[c.key], v => { st[c.key] = v; render(); }));
-    render();
-    K.onPortrait(render);
-  }
   const opts = (list, lab) => list.map(v => ({ v, label: lab ? lab[v] : v }));
 
   // =====================================================================

@@ -1,4 +1,6 @@
-/* Akoo: scene registry + shared Three.js engine for the A1 to B1 German path.
+/* Akoo: scene registry + shared Three.js engine, used by every course (German in /de, French in /fr).
+ * Each course page sets window.AKOO before loading this file:
+ *   { lang: 'de', voice: 'de', levels: { 0: 'Start here', 1: 'A1 · Beginner', ... }, ui: { listen, listenLabel, novoice } }
  *
  * SCENE CONTRACT (scenes/*.js call this):
  *   MM.register({
@@ -22,7 +24,7 @@
  *   words(spec)                     -> row of word blocks; row.arrange(keys, opts) moves them with springs
  *   pop(target)                     -> smear-stretch + painted sparks + speed line on a block or mesh
  *   backdrop()                      -> painted gradient sky sphere + drifting light motes
- *   say(text)                       -> speak German with a de-DE voice (buttons hidden if none)
+ *   say(text)                       -> speak the course language (AKOO.voice) if the device has that voice (buttons hidden if none)
  *   quiz(el, questions)             -> render a checked-in-page quiz
  * }
  * Everything added to ctx.scene is disposed automatically on unmount, as are overlay tags and controls.
@@ -187,7 +189,7 @@
   }
 
   // ---------- word blocks ----------
-  const ROLE = { subj: 'subj', verb: 'verb', verb2: 'verb2', obj: 'obj', conn: 'conn', punct: 'brass', plain: 'wood', bad: 'bad', e: 'subj', en: 'verb2', er: 'obj', es: 'conn', em: 'verb' };
+  const ROLE = { subj: 'subj', verb: 'verb', verb2: 'verb2', obj: 'obj', conn: 'conn', neg: 'c4', punct: 'brass', plain: 'wood', bad: 'bad', e: 'subj', en: 'verb2', er: 'obj', es: 'conn', em: 'verb' };
   const BH = 0.8, BD = 0.5, PX = 128, WPP = (BH * 0.72) / PX; // world units per canvas pixel
   const live = []; // blocks to repaint when web fonts finish loading
   const FONT = '700 78px Inter, "Helvetica Neue", Arial, sans-serif';
@@ -390,12 +392,16 @@
   }
 
   // ---------- speech ----------
-  let deVoice = null;
+  const CFG = window.AKOO || {};
+  const VLANG = (CFG.voice || 'de').toLowerCase();
+  const VMAIN = { de: 'de-DE', fr: 'fr-FR' }[VLANG] || VLANG;
+  let deVoice = null; // the course-language voice (name kept from the German-only days)
   function pickVoice() {
     if (!('speechSynthesis' in window)) return;
     const vs = window.speechSynthesis.getVoices();
-    deVoice = vs.find(v => /^de[-_]DE$/i.test(v.lang)) || vs.find(v => /^de([-_]|$)/i.test(v.lang)) || null;
-    document.documentElement.classList.toggle('has-de', !!deVoice);
+    const lc = v => String(v.lang).replace('_', '-').toLowerCase();
+    deVoice = vs.find(v => lc(v) === VMAIN.toLowerCase()) || vs.find(v => lc(v) === VLANG || lc(v).startsWith(VLANG + '-')) || null;
+    document.documentElement.classList.toggle('has-voice', !!deVoice);
   }
   if ('speechSynthesis' in window) {
     pickVoice();
@@ -406,7 +412,7 @@
     if (!deVoice) return false;
     const s = window.speechSynthesis; s.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.voice = deVoice; u.lang = deVoice.lang || 'de-DE'; u.rate = 0.9;
+    u.voice = deVoice; u.lang = deVoice.lang || VMAIN; u.rate = 0.9;
     s.speak(u); return true;
   }
   document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.say[data-say]'); if (b) say(b.dataset.say); });
@@ -527,7 +533,7 @@
 
   // ---------- nav + routing ----------
   const nav = document.getElementById('nav');
-  const WEEKS = { 0: "Start here", 1: "A1 · Beginner", 2: "A2 · Elementary", 3: "B1 · Intermediate" };
+  const WEEKS = CFG.levels || { 0: "Start here", 1: "A1 · Beginner", 2: "A2 · Elementary", 3: "B1 · Intermediate" };
   const wk = s => s.day ? `Wk ${s.day}` : "Intro";
 
   function buildNav() {
@@ -588,7 +594,7 @@
     }
     unmount();
     current = { s };
-    document.title = `${s.title} · Akoo`;
+    document.title = `${s.title} · Akoo${CFG.name ? ' ' + CFG.name : ''}`;
     document.getElementById('day').textContent = s.day ? `Week ${s.day} · ${WEEKS[s.week] || ""}` : WEEKS[s.week];
     document.getElementById('title').textContent = s.title;
     document.getElementById('tagline').textContent = s.tagline;

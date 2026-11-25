@@ -1,13 +1,31 @@
 // Akoo progress: saved in this browser only (localStorage), no accounts, nothing sent anywhere.
 // Loaded in <head> so a saved Daylight/Dusk choice is applied before the page paints.
 (function () {
-  const KEY = 'akoo:v1';
+  // one save per course language (akoo:de:v1, akoo:fr:v1); the theme lives in akoo:prefs, shared by all courses
+  const LANG = ((window.AKOO && window.AKOO.lang) || 'de').toLowerCase();
+  const KEY = `akoo:${LANG}:v1`, PREFS = 'akoo:prefs', OLD = 'akoo:v1';
+  const LANG_NAME = { de: 'German', fr: 'French' };
   const PASS = 4; // a lesson counts as finished at 4/5 or better
   const today = () => new Date().toISOString().slice(0, 10);
   const blank = () => ({ v: 1, created: today(), last: null, lessons: {}, review: [], prefs: {} });
 
   let ok = true;
   try { const t = '__akoo_test'; localStorage.setItem(t, '1'); localStorage.removeItem(t); } catch (e) { ok = false; }
+
+  // one-time move of the pre-French save (akoo:v1, German only) into akoo:de:v1 and akoo:prefs
+  if (ok) {
+    try {
+      const old = localStorage.getItem(OLD);
+      if (old) {
+        const d = JSON.parse(old);
+        if (d && d.prefs && d.prefs.theme && !localStorage.getItem(PREFS)) localStorage.setItem(PREFS, JSON.stringify({ theme: d.prefs.theme }));
+        if (d && !localStorage.getItem('akoo:de:v1')) { d.prefs = {}; localStorage.setItem('akoo:de:v1', JSON.stringify(d)); }
+        localStorage.removeItem(OLD);
+      }
+    } catch (e) { /* leave the old save alone if anything goes wrong */ }
+  }
+  let prefs = {};
+  try { prefs = (ok && JSON.parse(localStorage.getItem(PREFS))) || {}; } catch (e) { prefs = {}; }
 
   function load() {
     if (!ok) return blank();
@@ -55,11 +73,12 @@
       save();
       return l;
     },
-    theme: () => data.prefs.theme || null,
-    setTheme(t) { data.prefs.theme = t; save(); },
+    lang: LANG,
+    theme: () => prefs.theme || null,
+    setTheme(t) { prefs.theme = t; if (ok) try { localStorage.setItem(PREFS, JSON.stringify(prefs)); } catch (e) { /* ignore */ } },
     exportCode,
     importCode,
-    reset() { const theme = data.prefs.theme; data = blank(); if (theme) data.prefs.theme = theme; save(); },
+    reset() { data = blank(); save(); },
     count: () => Object.values(data.lessons).filter(l => l.done).length,
   };
 
@@ -75,7 +94,7 @@
 
   function exportCode() {
     const { v, created, last, lessons, review } = data; // the theme choice stays with each device
-    const body = toB64(JSON.stringify({ v, created, last, lessons, review }));
+    const body = toB64(JSON.stringify({ v, lang: LANG, created, last, lessons, review }));
     return `AKOO1-${body}-${sum(body)}`;
   }
 
@@ -89,6 +108,8 @@
     let inc;
     try { inc = JSON.parse(fromB64(m[1])); } catch (e) { return { ok: false, error: "This code couldn't be read. Copy it again and paste the whole thing." }; }
     if (!inc || inc.v !== 1 || typeof inc.lessons !== 'object') return { ok: false, error: 'This code is from a newer or unknown version of Akoo.' };
+    const from = (inc.lang || 'de').toLowerCase(); // codes made before French existed have no lang: they are German
+    if (from !== LANG) return { ok: false, error: `This is a ${LANG_NAME[from] || from} progress code. Restore it in the ${LANG_NAME[from] || from} course; this is the ${LANG_NAME[LANG] || LANG} course.` };
     let added = 0;
     for (const [id, l] of Object.entries(inc.lessons || {})) {
       if (!/^[a-z0-9-]+$/.test(id) || !l || typeof l !== 'object') continue;
@@ -194,6 +215,6 @@
     }));
   });
 
-  const t = data.prefs.theme;
+  const t = prefs.theme;
   if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
 })();

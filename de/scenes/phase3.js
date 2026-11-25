@@ -1,5 +1,5 @@
 /* Akoo, B1 weeks 23-25: exam polish.
- * Uses the engine in app.js and the shared kits from phase1.js / phase2.js (window.GK).
+ * Uses the engine in app.js and the shared kit in shared/kit.js (window.GK).
  * B1 speaking goal: hold a 10-minute conversation and pass a B1 mock test.
  */
 (function () {

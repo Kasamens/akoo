@@ -1,6 +1,6 @@
 /* Akoo, Start here: why the app is named after a parrot, what research says about how parrots learn to talk,
  * and the "learn in chunks" habit the rest of the path builds on.
- * Uses the engine in app.js and the shared kits from phase1.js / phase2.js (window.GK, read at mount time).
+ * Uses the engine in app.js and the shared kit in shared/kit.js (window.GK, read at mount time).
  */
 (function () {
   'use strict';

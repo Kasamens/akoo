@@ -1,92 +1,11 @@
 /* Akoo, level A2 (weeks 9-14): six grammar rules as painted 3D worlds.
- * Uses the shared engine in app.js (ctx.solid, ctx.words, ctx.pop, ctx.backdrop, ctx.say, quiz).
+ * Uses the shared engine (shared/app.js) and kit (shared/kit.js, window.GK) (ctx.solid, ctx.words, ctx.pop, ctx.backdrop, ctx.say, quiz).
  * All example sentences are original, on the study plan's themes: Reisen, Wohnen, Arbeit.
  */
 (function () {
   'use strict';
 
-  // ---------- shared kit ----------
-  function kit(ctx) {
-    const T = ctx.THREE, K = { T }, tags = [], timers = [];
-    K.V = (x, y, z) => new T.Vector3(x, y, z);
-    K.f = (dt, rate) => ctx.reduce ? 1 : 1 - Math.exp(-(rate || 6) * dt);
-    K.box = (w, h, d, col, o) => ctx.solid(new T.BoxGeometry(w, h, d), col, o);
-    K.cyl = (rt, rb, h, col, seg, o) => ctx.solid(new T.CylinderGeometry(rt, rb, h, seg || 20), col, o);
-    K.sph = (r, col, o) => ctx.solid(new T.SphereGeometry(r, 22, 16), col, o);
-    K.at = (obj, x, y, z, parent) => { obj.position.set(x, y, z); (parent || ctx.scene).add(obj); return obj; };
-    K.resize = (mesh, w, h, d) => {
-      const g = new T.BoxGeometry(w, h, d);
-      mesh.geometry.dispose(); mesh.geometry = g;
-      mesh.children.forEach(c => { if (c.userData.hull) c.geometry = g; });
-    };
-    K.emit = (mesh, v) => { if (mesh && mesh.material && mesh.material.uniforms) mesh.material.uniforms.uEmit.value = v; };
-    // frame-based delay so nothing fires into the next scene after unmount
-    K.after = (sec, fn) => timers.push({ t: sec, fn });
-    ctx.onFrame(dt => { for (let i = timers.length - 1; i >= 0; i--) { timers[i].t -= dt; if (timers[i].t <= 0) { const f = timers[i].fn; timers.splice(i, 1); f(); } } });
-
-    K.tag = (html, pos, cls) => {
-      const el = ctx.tag(html); if (cls) el.classList.add(cls);
-      const t = { el, pos: pos.clone(), on: true, h: html, obj: null };
-      t.show = b => { if (t.on !== b) { t.on = b; el.style.display = b ? '' : 'none'; } return t; };
-      t.set = h => { if (t.h !== h) { t.h = h; el.innerHTML = h; } return t; };
-      tags.push(t); return t;
-    };
-    const wp = new T.Vector3();
-    ctx.onFrame(() => tags.forEach(t => { if (!t.on) return; if (t.obj) { t.obj.getWorldPosition(wp); wp.add(t.pos); ctx.place(t.el, wp); } else ctx.place(t.el, t.pos); }));
-
-    K.el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
-    K.btn = (label, fn, ghost) => {
-      const b = K.el('button', 'btn' + (ghost ? ' ghost' : ''), label);
-      b.type = 'button'; b.addEventListener('click', fn); ctx.controls.appendChild(b); return b;
-    };
-    K.chips = (label, opts, init, fn) => {
-      const wrap = K.el('div', 'group');
-      const lid = 'g' + Math.random().toString(36).slice(2, 8);
-      wrap.innerHTML = `<span class="lbl" id="${lid}">${label}</span>`;
-      const row = K.el('div', 'row'); row.setAttribute('role', 'group'); row.setAttribute('aria-labelledby', lid);
-      const bs = opts.map(o => {
-        const b = K.el('button', 'chip', o.label); b.type = 'button';
-        if (o.aria) b.setAttribute('aria-label', o.aria);
-        b.addEventListener('click', () => { set(o.v); fn(o.v); });
-        row.appendChild(b); return [o.v, b];
-      });
-      function set(v) { bs.forEach(([k, b]) => b.setAttribute('aria-pressed', String(k === v))); }
-      wrap.appendChild(row); set(init); ctx.controls.appendChild(wrap);
-      return { set };
-    };
-    K.readout = () => {
-      const r = K.el('div', 'readout'); r.setAttribute('aria-live', 'polite'); ctx.controls.appendChild(r);
-      queueMicrotask(() => { if (r.parentNode === ctx.controls) ctx.controls.appendChild(r); });
-      return r;
-    };
-    // sentence text from a word row
-    K.sentence = (row, keys) => keys.map(k => row.blocks[k]).reduce((s, b) => s + (b.role === 'punct' ? '' : (s ? ' ' : '')) + b.word, '');
-    // re-run a layout when the stage flips between portrait and landscape
-    K.onPortrait = fn => { let p = ctx.portrait; ctx.onFrame(() => { if (ctx.portrait !== p) { p = ctx.portrait; fn(); } }); };
-    return K;
-  }
-
-  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-  const attr = s => String(s).replace(/<[^>]+>/g, '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-  const SPK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path d="M11 5.5c1 .8 1 4.2 0 5M12.8 3.8c2 1.8 2 6.6 0 8.4" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
-  const say = de => `<button type="button" class="say" data-say="${attr(de)}" aria-label="Anhören: ${attr(de)}">${SPK}▶ hören</button>`;
-  const ex = items => `<p class="novoice">No German voice was found on this device, so the ▶ hören buttons are hidden.</p><ul class="ex">${items.map(([de, en]) => `<li><span class="de">${de} ${say(de)}</span><span class="en">${en}</span></li>`).join('')}</ul>`;
-  const table = (head, rows) => `<div class="tw"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  const R = (role, s) => `<span class="r-${role}">${s}</span>`;
-
-  // a simple brass gear: hub + teeth, facing the camera (axis = z)
-  function gear(K, r, teeth, col) {
-    const T = K.T, g = new T.Group();
-    const hub = K.cyl(r, r, 0.3, col, 28); hub.rotation.x = Math.PI / 2; g.add(hub);
-    const axle = K.cyl(r * 0.25, r * 0.25, 0.4, 'copper', 14); axle.rotation.x = Math.PI / 2; g.add(axle);
-    for (let i = 0; i < teeth; i++) {
-      const a = i / teeth * Math.PI * 2;
-      const tth = K.box(0.22, 0.26, 0.28, col, { ink: 0.6 });
-      tth.position.set(Math.cos(a) * (r + 0.1), Math.sin(a) * (r + 0.1), 0); tth.rotation.z = a;
-      g.add(tth);
-    }
-    return g;
-  }
+  const { kit, cap, attr, say, ex, table, R, gear, makeFigure } = window.GK;
 
   // =====================================================================
   // Week 9 (A2): Nebensätze
@@ -570,20 +489,6 @@
     anziehen: { f: { ich: 'ziehe', du: 'ziehst', er: 'zieht', wir: 'ziehen', ihr: 'zieht', sie: 'ziehen' }, obj: 'die Jacke', x: 'an', part: 'torso', en: ['get dressed', 'put on (one’s) jacket'] },
   };
 
-  function makeFigure(K, col) {
-    const T = K.T, g = new T.Group(), parts = {};
-    [-0.17, 0.17].forEach(x => K.at(K.cyl(0.11, 0.09, 0.95, col, 12), x, 0.48, 0, g));
-    parts.torso = K.at(K.cyl(0.36, 0.3, 0.95, col, 16), 0, 1.42, 0, g);
-    parts.head = K.at(K.sph(0.27, 'paper'), 0, 2.15, 0, g);
-    K.at(K.sph(0.28, 'wood'), 0, 2.24, -0.04, g).scale.set(1, 0.6, 1);
-    parts.hands = [];
-    [-0.46, 0.46].forEach(x => {
-      const arm = K.cyl(0.08, 0.07, 0.85, col, 10); arm.position.set(x, 1.35, 0.12); arm.rotation.x = -0.5; g.add(arm);
-      const hand = K.sph(0.1, 'paper'); hand.position.set(x, 0.98, 0.36); g.add(hand); parts.hands.push(hand);
-    });
-    g.userData.parts = parts;
-    return g;
-  }
 
   MM.register({
     id: 'reflexive-verben', day: 12, week: 2,
@@ -1051,6 +956,4 @@
       render(false);
     },
   });
-  // shared with scenes/a1.js, phase2.js and phase3.js
-  window.GK = { kit, cap, attr, say, ex, table, R, gear, makeFigure };
 })();
