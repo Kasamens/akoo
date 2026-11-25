@@ -5,7 +5,7 @@
  */
 (function () {
   // Paste the Apps Script web app URL here after deploying tools/feedback/Code.gs (see tools/feedback/README.md).
-  const ENDPOINT = '';
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzJLRUQzjJElW3g9qKPZEEODKZihNDf6olrlleIBhTBy0B3oIoDIBBzQ4dk8jN5dqUV/exec';
 
   const ROOT = new URL('../', document.currentScript.src).href; // site root, from /shared/feedback.js
   const CFG = window.AKOO || {};
