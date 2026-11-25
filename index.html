@@ -6,6 +6,7 @@
 <meta name="description" content="Akoo: German from zero to B1, one rule per week, each a small painted 3D world with audio and a quiz. If a parrot can learn to talk, so can you.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A6%9C%3C/text%3E%3C/svg%3E">
+<script src="progress.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -77,6 +78,16 @@ aside { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); displ
 .wk a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .wk .d { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 4.2ch; }
 .wk a[aria-current="page"] .d { color: inherit; opacity: .7; }
+.wk .t { flex: 1; min-width: 0; }
+.wk .mk { font-size: 0.8rem; color: var(--good); min-width: 1ch; text-align: right; }
+.wk a.is-started .mk { color: var(--muted); }
+.wk a[aria-current="page"] .mk { color: inherit; opacity: .75; }
+.wk .cnt { color: var(--good); }
+.best { font-size: 0.85rem; color: var(--muted); flex-basis: 100%; order: 3; }
+.best:empty { display: none; }
+.continue { margin-top: 14px; }
+.continue a { display: inline-block; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--warm); font-weight: 600; text-decoration: none; }
+.continue a:hover { border-color: var(--warm); }
 
 main { display: grid; gap: 28px; min-width: 0; }
 .head { display: grid; gap: 10px; max-width: 720px; }
@@ -255,12 +266,12 @@ main { display: grid; gap: 28px; min-width: 0; }
 </div>
 
 <script>
-// theme toggle: flips between dusk and daylight, remembering nothing (no storage needed)
+// theme toggle: flips between dusk and daylight; the choice is remembered in this browser (progress.js)
 (function () {
   const b = document.getElementById('themebtn'), r = document.documentElement;
   const isLight = () => r.dataset.theme ? r.dataset.theme === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
   const label = () => { b.textContent = isLight() ? 'Dusk' : 'Daylight'; b.setAttribute('aria-label', isLight() ? 'Switch to dark theme' : 'Switch to light theme'); };
-  b.addEventListener('click', () => { r.dataset.theme = isLight() ? 'dark' : 'light'; label(); });
+  b.addEventListener('click', () => { r.dataset.theme = isLight() ? 'dark' : 'light'; label(); if (window.AkooProgress) AkooProgress.setTheme(r.dataset.theme); });
   label();
 })();
 </script>

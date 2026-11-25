@@ -415,11 +415,14 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const gap = s => esc(s).replace(/___/g, '<span class="gap" aria-label="Lücke">&nbsp;&nbsp;&nbsp;&nbsp;</span>');
   function shuffle(a, seed) { a = a.slice(); let x = seed || 7; for (let i = a.length - 1; i > 0; i--) { x = (x * 9301 + 49297) % 233280; const j = Math.floor(x / 233280 * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-  function quiz(el, qs) {
+  function quiz(el, qs, lessonId) {
     let score = 0, done = 0;
-    el.innerHTML = `<ol class="quiz"></ol><div class="qfoot"><p class="score" aria-live="polite">0 / ${qs.length} richtig</p><button type="button" class="btn ghost qreset">Nochmal</button></div>`;
-    const ol = el.querySelector('.quiz'), scoreEl = el.querySelector('.score');
-    el.querySelector('.qreset').addEventListener('click', () => quiz(el, qs));
+    el.innerHTML = `<ol class="quiz"></ol><div class="qfoot"><p class="score" aria-live="polite">0 / ${qs.length} richtig</p><p class="best"></p><button type="button" class="btn ghost qreset">Nochmal</button></div>`;
+    const ol = el.querySelector('.quiz'), scoreEl = el.querySelector('.score'), bestEl = el.querySelector('.best');
+    el.querySelector('.qreset').addEventListener('click', () => quiz(el, qs, lessonId));
+    const P = lessonId && window.AkooProgress;
+    const showBest = l => { bestEl.textContent = l && l.tries ? `Best: ${l.best}/${qs.length} · ${l.tries} ${l.tries === 1 ? 'try' : 'tries'}${l.done ? ' · ✓ finished' : ''}` : ''; };
+    if (P) showBest(P.lesson(lessonId));
     const finish = (li, ok, q) => {
       done++; if (ok) score++;
       li.classList.add(ok ? 'right' : 'wrong');
@@ -428,6 +431,7 @@
       why.innerHTML = `<strong>${ok ? 'Richtig.' : 'Nicht ganz.'}</strong> ${q.why}`;
       why.hidden = false;
       scoreEl.textContent = `${score} / ${qs.length} richtig` + (done === qs.length ? (score === qs.length ? ' · perfekt!' : ' · try again with “Nochmal”') : '');
+      if (P && done === qs.length) showBest(P.quiz(lessonId, score));
     };
     qs.forEach((q, qi) => {
       const li = document.createElement('li'); li.className = 'q';
@@ -530,11 +534,43 @@
     scenes.sort((a, b) => a.day - b.day);
     let html = '';
     Object.keys(WEEKS).map(Number).forEach(w => {
-      html += `<div class="wk"><span class="eyebrow">${WEEKS[w]}</span><ol>`;
-      scenes.filter(s => s.week === w).forEach(s => { html += `<li><a href="#${s.id}" data-id="${s.id}"><span class="d">${wk(s)}</span>${s.title}</a></li>`; });
+      html += `<div class="wk" data-week="${w}"><span class="eyebrow">${WEEKS[w]}<span class="cnt"></span></span><ol>`;
+      scenes.filter(s => s.week === w).forEach(s => { html += `<li><a href="#${s.id}" data-id="${s.id}"><span class="d">${wk(s)}</span><span class="t">${s.title}</span><span class="mk" aria-hidden="true"></span></a></li>`; });
       html += '</ol></div>';
     });
     nav.innerHTML = html;
+    paintProgress();
+  }
+
+  // ✓ = finished (quiz 4/5+), • = opened but not finished; level headings show "finished / total"
+  function paintProgress() {
+    const P = window.AkooProgress; if (!P) return;
+    nav.querySelectorAll('a[data-id]').forEach(a => {
+      const l = P.lesson(a.dataset.id), done = !!(l && l.done), seen = !!(l && l.seen);
+      a.classList.toggle('is-done', done);
+      a.classList.toggle('is-started', seen && !done);
+      a.querySelector('.mk').textContent = done ? '✓' : seen ? '•' : '';
+      const t = a.querySelector('.t').textContent;
+      a.setAttribute('aria-label', `${a.querySelector('.d').textContent} ${t}${done ? ', finished' : seen ? ', started' : ''}`);
+    });
+    nav.querySelectorAll('.wk[data-week]').forEach(w => {
+      const cnt = w.querySelector('.cnt'), links = w.querySelectorAll('a[data-id]');
+      if (w.dataset.week === '0') { cnt.textContent = ''; return; }
+      const n = [...links].filter(a => a.classList.contains('is-done')).length;
+      cnt.textContent = n ? ` · ${n}/${links.length}` : '';
+    });
+  }
+  if (window.AkooProgress) window.AkooProgress.onChange(() => { paintProgress(); if (current) paintContinue(current.s); });
+
+  // "Continue" link on the intro page, pointing at the last lesson opened
+  function paintContinue(s) {
+    const head = document.querySelector('main .head'), old = document.querySelector('.continue');
+    if (old) old.remove();
+    const P = window.AkooProgress, last = P && P.get().last;
+    if (s.id !== 'akoo' || !last) return;
+    const t = scenes.find(x => x.id === last.id);
+    if (!t || t.id === 'akoo') return;
+    head.insertAdjacentHTML('beforeend', `<p class="continue"><a href="#${t.id}">Continue where you left off: ${wk(t)} · ${t.title} →</a></p>`);
   }
 
   function show(id, remount) {
@@ -558,7 +594,9 @@
     const body = document.getElementById('body');
     body.innerHTML = s.body || '';
     const qel = body.querySelector('[data-quiz]');
-    if (qel && s.quiz) quiz(qel, s.quiz);
+    if (qel && s.quiz) quiz(qel, s.quiz, s.id);
+    if (window.AkooProgress) window.AkooProgress.open(s.id, s.id !== 'akoo');
+    paintContinue(s);
     nav.querySelectorAll('a[data-id]').forEach(a => a.setAttribute('aria-current', a.dataset.id === s.id ? 'page' : 'false'));
     const mcur = document.getElementById('mcur'); if (mcur) mcur.textContent = `${wk(s)} · ${s.title}`;
     const i = scenes.indexOf(s);
