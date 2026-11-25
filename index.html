@@ -183,10 +183,10 @@ main { display: grid; gap: 28px; min-width: 0; }
   .mbar .cur { flex: 1; min-width: 0; font-size: 0.82rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .menubtn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; }
   .menubtn svg { width: 18px; height: 18px; }
-  aside { position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; width: min(86vw, 340px); max-height: none;
-    padding: calc(18px + env(safe-area-inset-top, 0px)) 18px calc(24px + env(safe-area-inset-bottom, 0px)) calc(18px + env(safe-area-inset-left, 0px));
-    background: var(--bg); border-right: 1px solid var(--line); box-shadow: 8px 0 30px rgba(0,0,0,.35);
-    overscroll-behavior: contain; transform: translateX(-105%); visibility: hidden;
+  aside { position: fixed; top: 0; bottom: 0; right: 0; z-index: 40; width: min(86vw, 340px); max-height: none;
+    padding: calc(18px + env(safe-area-inset-top, 0px)) calc(18px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) 18px;
+    background: var(--bg); border-left: 1px solid var(--line); box-shadow: -8px 0 30px rgba(0,0,0,.35);
+    overscroll-behavior: contain; transform: translateX(105%); visibility: hidden;
     transition: transform .28s ease, visibility 0s linear .28s; }
   body.navopen aside { transform: none; visibility: visible; transition: transform .28s ease; }
   .closebtn { display: inline-flex; justify-self: end; padding: 6px 12px; margin-bottom: -10px; }
