@@ -172,9 +172,27 @@ main { display: grid; gap: 28px; min-width: 0; }
 #pager { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.92rem; }
 #pager a { text-decoration: none; color: var(--warm); font-weight: 600; }
 
+.mbar, .scrim, .closebtn { display: none; }
 @media (max-width: 900px) {
-  .shell { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-top: 20px; }
-  aside { position: static; max-height: none; }
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 0; }
+  .mbar { display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 30;
+    margin: 0 -16px; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+    background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line); }
+  .mbar .logo { font: 400 1.6rem var(--font-display); letter-spacing: .02em; text-decoration: none; }
+  .mbar .cur { flex: 1; min-width: 0; font-size: 0.82rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .menubtn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; }
+  .menubtn svg { width: 18px; height: 18px; }
+  aside { position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; width: min(86vw, 340px); max-height: none;
+    padding: calc(18px + env(safe-area-inset-top, 0px)) 18px calc(24px + env(safe-area-inset-bottom, 0px)) calc(18px + env(safe-area-inset-left, 0px));
+    background: var(--bg); border-right: 1px solid var(--line); box-shadow: 8px 0 30px rgba(0,0,0,.35);
+    overscroll-behavior: contain; transform: translateX(-105%); visibility: hidden;
+    transition: transform .28s ease, visibility 0s linear .28s; }
+  body.navopen aside { transform: none; visibility: visible; transition: transform .28s ease; }
+  .closebtn { display: inline-flex; justify-self: end; padding: 6px 12px; margin-bottom: -10px; }
+  .scrim { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(5,7,10,.55); opacity: 0; pointer-events: none; transition: opacity .28s; }
+  body.navopen .scrim { opacity: 1; pointer-events: auto; }
+  body.navopen { overflow: hidden; }
 }
 @media (max-width: 560px) {
   .tag { font-size: 0.68rem; max-width: 110px; }
@@ -197,7 +215,16 @@ main { display: grid; gap: 28px; min-width: 0; }
 </svg>
 
 <div class="shell" id="top">
-  <aside>
+  <header class="mbar">
+    <a class="logo" href="#akoo">Akoo</a>
+    <span class="cur" id="mcur"></span>
+    <button type="button" class="btn ghost menubtn" id="menubtn" aria-controls="side" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Lessons
+    </button>
+  </header>
+  <div class="scrim" id="scrim" aria-hidden="true"></div>
+  <aside id="side" aria-label="Lessons menu">
+    <button type="button" class="btn ghost closebtn" id="closebtn" aria-label="Close lessons menu">Close ✕</button>
     <div class="brand">
       <span class="eyebrow">A1 → A2 → B1 · one rule a week</span>
       <h1>Akoo</h1>
@@ -242,3 +269,21 @@ main { display: grid; gap: 28px; min-width: 0; }
 <script src="scenes/phase3.js"></script>
 <script src="scenes/start.js"></script>
 <script src="scenes/a1.js"></script>
+<script>
+(() => {
+  const mq = matchMedia('(max-width: 900px)');
+  const btn = document.getElementById('menubtn'), side = document.getElementById('side');
+  const isOpen = () => document.body.classList.contains('navopen');
+  const set = open => {
+    document.body.classList.toggle('navopen', open);
+    btn.setAttribute('aria-expanded', open);
+    if (open) setTimeout(() => (side.querySelector('[aria-current="page"]') || side.querySelector('a')).focus({ preventScroll: true }), 60);
+  };
+  btn.addEventListener('click', () => set(!isOpen()));
+  document.getElementById('closebtn').addEventListener('click', () => { set(false); btn.focus(); });
+  document.getElementById('scrim').addEventListener('click', () => set(false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen()) { set(false); btn.focus(); } });
+  side.addEventListener('click', e => { if (e.target.closest('a') && mq.matches) set(false); });
+  mq.addEventListener('change', () => set(false));
+})();
+</script>

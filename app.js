@@ -560,6 +560,7 @@
     const qel = body.querySelector('[data-quiz]');
     if (qel && s.quiz) quiz(qel, s.quiz);
     nav.querySelectorAll('a[data-id]').forEach(a => a.setAttribute('aria-current', a.dataset.id === s.id ? 'page' : 'false'));
+    const mcur = document.getElementById('mcur'); if (mcur) mcur.textContent = `${wk(s)} · ${s.title}`;
     const i = scenes.indexOf(s);
     const prev = scenes[i - 1], next = scenes[i + 1];
     document.getElementById('pager').innerHTML =
