@@ -1,4 +1,13 @@
 {
   "updated": "2026-11-25",
-  "entries": []
+  "entries": [
+    {
+      "id": "CALL-001",
+      "date": "2026-11-25",
+      "course": "site",
+      "lesson": "Phones",
+      "change": "Phones got a proper lessons menu: a Lessons button that slides the sidebar in from the right, instead of the lesson list crammed at the top of the page.",
+      "name": "Raymond Okyere"
+    }
+  ]
 }
