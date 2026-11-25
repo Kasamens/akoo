@@ -25,3 +25,33 @@
   side.addEventListener('click', e => { if (e.target.closest('a') && mq.matches) set(false); });
   mq.addEventListener('change', () => set(false));
 })();
+
+// language picker: every course Akoo offers. To add a language, add one entry here (and its /<code>/ course).
+(function () {
+  const FLAGS = {
+    de: '<svg viewBox="0 0 5 3" aria-hidden="true"><rect width="5" height="1" fill="#000"/><rect y="1" width="5" height="1" fill="#DD0000"/><rect y="2" width="5" height="1" fill="#FFCE00"/></svg>',
+    fr: '<svg viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#002395"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ED2939"/></svg>',
+  };
+  const LANGS = [
+    { code: 'de', name: 'Deutsch', en: 'German' },
+    { code: 'fr', name: 'Français', en: 'French' },
+  ];
+  const cur = (window.AKOO && window.AKOO.lang) || 'de';
+  const me = LANGS.find(l => l.code === cur) || LANGS[0];
+  const flag = l => `<span class="lp-flag">${FLAGS[l.code] || ''}</span>`;
+  let n = 0;
+  document.querySelectorAll('.langpick').forEach(box => {
+    const id = 'lp-menu-' + (++n);
+    box.innerHTML = `<button type="button" class="lp-btn" aria-haspopup="true" aria-expanded="false" aria-controls="${id}" aria-label="Course language: ${me.en}. Change language">${flag(me)}<span class="lp-name">${me.name}</span></button>
+      <ul class="lp-menu" id="${id}" hidden>${LANGS.map(l => `<li><a href="../${l.code}/" lang="${l.code}" ${l.code === cur ? 'aria-current="true" ' : ''}aria-label="${l.name} (${l.en})">${flag(l)}<span>${l.name}</span></a></li>`).join('')}</ul>`;
+    const btn = box.querySelector('.lp-btn'), menu = box.querySelector('.lp-menu');
+    const open = yes => { menu.hidden = !yes; btn.setAttribute('aria-expanded', yes); if (yes) (menu.querySelector('[aria-current="true"]') || menu.querySelector('a')).focus(); };
+    btn.addEventListener('click', e => { e.stopPropagation(); open(menu.hidden); });
+    document.addEventListener('click', e => { if (!box.contains(e.target)) open(false); });
+    box.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !menu.hidden) { e.stopPropagation(); open(false); btn.focus(); }
+      const links = [...menu.querySelectorAll('a')], i = links.indexOf(document.activeElement);
+      if (i >= 0 && /^Arrow(Right|Down|Left|Up)$/.test(e.key)) { e.preventDefault(); links[(i + (/Right|Down/.test(e.key) ? 1 : links.length - 1)) % links.length].focus(); }
+    });
+  });
+})();

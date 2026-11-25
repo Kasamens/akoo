@@ -223,13 +223,28 @@ main { display: grid; gap: 28px; min-width: 0; }
   .protect a:hover { text-decoration: underline; }
   .fine { font-size: 0.85em; color: var(--muted); }
 
-/* language switch (top bar on phones, brand block on laptops) */
-.langsw { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 8px; font: 600 0.72rem var(--font-mono); letter-spacing: .06em; }
-.langsw a { padding: 4px 7px; border-radius: 6px; text-decoration: none; color: var(--muted); }
-.langsw a[aria-current="true"] { background: var(--fg); color: var(--surface); }
-.langsw a:hover:not([aria-current="true"]) { color: var(--fg); }
-.brand .langsw { justify-self: start; }
-.mbar .langsw { display: none; }
-@media (max-width: 900px) { .mbar .langsw { display: inline-flex; } .brand .langsw { display: none; } }
-
+/* language picker: a flag button that opens a menu of courses (flag with the language name under it) */
+.langpick { position: relative; }
+.lp-btn { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 8px 3px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--fg); cursor: pointer; font: 600 0.62rem/1.1 var(--font-body); }
+.lp-btn:hover, .lp-btn[aria-expanded="true"] { border-color: var(--warm); }
+.lp-btn .lp-name::after { content: " ▾"; color: var(--muted); }
+.lp-flag { display: block; width: 26px; height: 17px; border-radius: 3px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
+.lp-flag svg { display: block; width: 100%; height: 100%; }
+.lp-menu { position: absolute; top: calc(100% + 6px); z-index: 50; display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 6px; width: max-content; min-width: 190px; max-width: min(320px, 80vw); margin: 0; padding: 8px; list-style: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+.lp-menu[hidden] { display: none; }
+.lp-menu a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px 8px; border-radius: 8px; text-decoration: none; color: var(--fg); font-size: 0.8rem; font-weight: 600; text-align: center; }
+.lp-menu a .lp-flag { width: 40px; height: 27px; }
+.lp-menu a:hover, .lp-menu a:focus-visible { background: var(--bg); outline: none; }
+.lp-menu a[aria-current="true"] { background: var(--bg); box-shadow: inset 0 0 0 1px var(--warm); }
+.lp-menu .lp-soon { display: block; font-weight: 400; font-size: 0.68rem; color: var(--muted); }
+.brand .langpick { justify-self: start; }
+.brand .lp-menu { left: 0; }
+.mbar .lp-menu { right: 0; }
+.mbar .langpick { display: none; }
+@media (max-width: 900px) {
+  .mbar .langpick { display: block; position: static; }   /* menu anchors to the sticky top bar, so it never runs off-screen */
+  .mbar .lp-menu { top: calc(100% - 2px); right: 12px; max-width: calc(100vw - 24px); }
+  .brand .langpick { display: none; }
+}
 .brand h1 a.home { color: inherit; text-decoration: none; }
