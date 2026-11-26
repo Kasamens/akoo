@@ -12,8 +12,8 @@
  *   AkooStats.event(name, lesson?) count an event, e.g. event('quiz-pass', 'praesens') -> quiz-pass/de/praesens
  */
 (function () {
-  const GC_CODE = '';  // GoatCounter site code, e.g. 'akoo' for https://akoo.goatcounter.com
-  const CF_TOKEN = ''; // Cloudflare Web Analytics beacon token
+  const GC_CODE = 'akoobird'; // GoatCounter site: https://akoobird.goatcounter.com
+  const CF_TOKEN = ''; // Cloudflare Web Analytics beacon token (not set up yet; empty = skipped)
 
   const q = new URLSearchParams(location.search);
   const store = (k, v) => { try { v === undefined ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
