@@ -160,6 +160,7 @@
     const views = {
       export() {
         const code = P.exportCode();
+        if (window.AkooStats) AkooStats.event('backup');
         panel.innerHTML = `<p>Your progress code. Keep it somewhere safe, or paste it into Akoo on another phone or browser.</p>
           <textarea readonly aria-label="Your progress code"></textarea>
           <div class="row"><button type="button" class="btn" data-a="copy">Copy code</button><button type="button" class="btn ghost" data-a="file">Download file</button></div>`;
@@ -187,6 +188,7 @@
           if (!ok) { say("Progress can't be saved in this window, so it can't be restored here.", 'err'); return; }
           const r = P.importCode(text);
           if (!r.ok) { say(r.error, 'err'); return; }
+          if (window.AkooStats) AkooStats.event('restore');
           close();
           say(r.added ? `Restored. ${lessonsWord(r.added)} added; ${r.total} finished in total.` : `Restored. Nothing new to add; ${r.total} finished in total.`, 'ok');
         };
@@ -199,7 +201,7 @@
         const n = P.count();
         panel.innerHTML = `<p>Delete all saved progress in this browser${n ? ` (${lessonsWord(n)} finished)` : ''}? This can't be undone. Back up first if you might want it later.</p>
           <div class="row"><button type="button" class="btn danger" data-a="yes">Yes, reset</button><button type="button" class="btn ghost" data-a="no">Cancel</button></div>`;
-        panel.querySelector('[data-a="yes"]').addEventListener('click', () => { P.reset(); close(); say('Progress reset.', 'ok'); });
+        panel.querySelector('[data-a="yes"]').addEventListener('click', () => { P.reset(); close(); say('Progress reset.', 'ok'); if (window.AkooStats) AkooStats.event('reset'); });
         panel.querySelector('[data-a="no"]').addEventListener('click', () => { const b = btns.find(x => x.dataset.prog === 'reset'); close(); say('', ''); b.focus(); });
         return panel.querySelector('[data-a="no"]');
       },

@@ -157,6 +157,7 @@
     dlg.querySelector('.fb-prog').hidden = !(window.AkooProgress && document.getElementById('nav'));
     openedAt = Date.now();
     dlg.showModal();
+    if (window.AkooStats) AkooStats.event('feedback-open');
     const first = form.querySelector('input[name="type"]');
     if (first) first.focus();
   }

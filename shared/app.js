@@ -440,6 +440,7 @@
       why.hidden = false;
       scoreEl.textContent = `${score} / ${qs.length} ${QZ.correct}` + (done === qs.length ? (score === qs.length ? ` · ${QZ.perfect}` : ` · try again with “${QZ.again}”`) : '');
       if (P && done === qs.length) showBest(P.quiz(lessonId, score));
+      if (lessonId && done === qs.length && window.AkooStats) AkooStats.event(score >= ((window.AkooProgress && AkooProgress.PASS) || 4) ? 'quiz-pass' : 'quiz-try', lessonId);
     };
     qs.forEach((q, qi) => {
       const li = document.createElement('li'); li.className = 'q';
@@ -626,6 +627,7 @@
     if (!(anchor && current && current.s.id === id)) show(id);
     const target = (anchor && document.getElementById(anchor)) || document.getElementById('top');
     requestAnimationFrame(() => target.scrollIntoView({ behavior: smooth && !reduce ? 'smooth' : 'auto', block: 'start' }));
+    if (window.AkooStats && current) AkooStats.page(current.s.id); // counts once per lesson; section links in the same lesson are ignored
   }
   window.addEventListener('hashchange', () => route(true));
   // same-hash clicks fire no hashchange: re-run the route so the link still scrolls
