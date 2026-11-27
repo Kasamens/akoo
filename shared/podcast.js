@@ -59,13 +59,13 @@
       </div>
       <div class="pod-now" aria-live="off"><span class="pod-spk"></span><span class="pod-line"></span></div>
       <div class="pod-opts">
-        <label><input type="checkbox" class="pod-opt-en"> English</label>
+        <label><input type="checkbox" class="pod-opt-en"> Translate</label>
         <label><input type="checkbox" class="pod-opt-hide"> Hide German text</label>
       </div>
       <ol class="pod-tx" aria-label="Transcript"></ol>`;
     const quizSec = body.querySelector('[data-quiz]');
     const anchor = quizSec && (quizSec.closest('#body > *') || quizSec);
-    anchor ? body.insertBefore(sec, anchor) : body.appendChild(sec);
+    anchor ? anchor.after(sec) : body.appendChild(sec); // right after the quiz
 
     const $ = s => sec.querySelector(s);
     const audio = new Audio();
