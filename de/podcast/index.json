@@ -8,5 +8,75 @@
   "num": 1,
   "series": "Akoo A1",
   "lesson": "praesens"
+ },
+ {
+  "id": "akoo-a1-02-artikel",
+  "title": "Der, die, das",
+  "en": "Kofi's new flat: der Tisch, die Lampe, das Bett",
+  "level": "A1",
+  "duration": 265.8,
+  "num": 2,
+  "series": "Akoo A1",
+  "lesson": "artikel"
+ },
+ {
+  "id": "akoo-a1-03-satzbau",
+  "title": "Verb an Position 2",
+  "en": "Kofi explores Berlin: Heute arbeite ich, wo ist der Bahnhof?",
+  "level": "A1",
+  "duration": 257.5,
+  "num": 3,
+  "series": "Akoo A1",
+  "lesson": "satzbau"
+ },
+ {
+  "id": "akoo-a1-04-akkusativ",
+  "title": "Akkusativ",
+  "en": "At the market: Ich nehme einen Apfel",
+  "level": "A1",
+  "duration": 265.0,
+  "num": 4,
+  "series": "Akoo A1",
+  "lesson": "akkusativ"
+ },
+ {
+  "id": "akoo-a1-05-nicht-kein",
+  "title": "nicht und kein",
+  "en": "Problems in the flat: kein Sofa, nicht teuer",
+  "level": "A1",
+  "duration": 253.0,
+  "num": 5,
+  "series": "Akoo A1",
+  "lesson": "nicht-kein"
+ },
+ {
+  "id": "akoo-a1-06-modalverben",
+  "title": "Modalverben",
+  "en": "Weekend plans: Ich will Deutsch lernen",
+  "level": "A1",
+  "duration": 257.9,
+  "num": 6,
+  "series": "Akoo A1",
+  "lesson": "modalverben"
+ },
+ {
+  "id": "akoo-a1-07-trennbare-verben",
+  "title": "Trennbare Verben",
+  "en": "Kofi's day: Ich stehe um sieben auf",
+  "level": "A1",
+  "duration": 246.9,
+  "num": 7,
+  "series": "Akoo A1",
+  "lesson": "trennbare-verben"
+ },
+ {
+  "id": "akoo-a1-08-possessivartikel",
+  "title": "mein, dein, sein, ihr",
+  "en": "Family photos: meine Mutter, dein Bruder",
+  "level": "A1",
+  "duration": 258.1,
+  "num": 8,
+  "series": "Akoo A1",
+  "lesson": "possessivartikel"
  }
 ]

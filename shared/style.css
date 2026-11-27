@@ -348,6 +348,7 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
 .pod-pfill { position: absolute; inset: 0; background: color-mix(in srgb, var(--accent) 22%, transparent); transform-origin: left; transform: scaleX(0); }
 .pod-pause.on .pod-pill { border-style: solid; }
 .spk-L { --c: var(--accent); } .spk-K { --c: var(--good); } .spk-J { --c: var(--warm); } .spk-H { --c: var(--muted); }
+.spk-T { --c: var(--c2); } .spk-A { --c: var(--conn); }
 @media (max-width: 560px) {
   .pod { padding: 12px; }
   .pod-ln { grid-template-columns: minmax(0, 1fr); gap: 2px; }
