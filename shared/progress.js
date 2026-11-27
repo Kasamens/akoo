@@ -65,6 +65,10 @@
       if (track) data.last = { id, at: new Date().toISOString() };
       save();
     },
+    listen(id) {
+      const l = lesson(id);
+      if (!l.listened) { l.listened = today(); save(); }
+    },
     quiz(id, score) {
       const l = lesson(id);
       l.tries = (l.tries || 0) + 1;
@@ -118,6 +122,7 @@
       if (l.done) cur.done = earliest(cur.done, String(l.done).slice(0, 10));
       if (+l.best) cur.best = Math.max(cur.best || 0, Math.min(+l.best, 99));
       if (+l.tries) cur.tries = Math.max(cur.tries || 0, Math.min(+l.tries, 9999));
+      if (l.listened) cur.listened = earliest(cur.listened, String(l.listened).slice(0, 10));
       if (cur.done && !wasDone) added++;
     }
     if (inc.last && inc.last.id && (!data.last || inc.last.at > data.last.at)) data.last = { id: String(inc.last.id), at: String(inc.last.at) };

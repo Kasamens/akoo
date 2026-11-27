@@ -560,7 +560,8 @@
       a.classList.toggle('is-started', tried && !done);
       const mk = a.querySelector('.mk');
       mk.textContent = done ? '✓' : tried ? '•' : '';
-      const note = done ? `finished, best ${l.best}/5` : tried ? `quiz tried, best ${l.best}/5` : '';
+      let note = done ? `finished, best ${l.best}/5` : tried ? `quiz tried, best ${l.best}/5` : '';
+      if (l && l.listened) note += (note ? ' · ' : '') + 'podcast listened';
       a.title = note ? note[0].toUpperCase() + note.slice(1) : '';
       a.setAttribute('aria-label', `${a.querySelector('.d').textContent} ${a.querySelector('.t').textContent}${note ? ', ' + note : ''}`);
     });
@@ -606,6 +607,7 @@
     body.innerHTML = s.body || '';
     const qel = body.querySelector('[data-quiz]');
     if (qel && s.quiz) quiz(qel, s.quiz, s.id);
+    if (window.AkooPodcast) window.AkooPodcast.mount(body, s.id); // adds a Hören player if this lesson has an episode
     if (window.AkooProgress) window.AkooProgress.open(s.id, s.id !== 'akoo');
     paintContinue(s);
     nav.querySelectorAll('a[data-id]').forEach(a => a.setAttribute('aria-current', a.dataset.id === s.id ? 'page' : 'false'));

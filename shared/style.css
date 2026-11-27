@@ -307,3 +307,50 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
   .fb-form, .fb-done { padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(20px + env(safe-area-inset-bottom, 0px)); }
   .fb-done { min-height: 100%; align-content: center; }
 }
+
+/* ---------- Hören · Podcast (shared/podcast.js) ---------- */
+.pod { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 16px; margin: 8px 0 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.pod h3 { font-size: 1.5rem; }
+.pod-meta { font-size: 0.9rem; color: var(--muted); }
+.pod-how { font-size: 0.85rem; color: var(--muted); }
+.pod-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pod-bar .btn { padding: 8px 12px; min-width: 44px; }
+.pod-play { min-width: 56px; font-size: 1rem; }
+.pod-time { margin-left: auto; font: 0.8rem var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.pod-scrub { position: relative; height: 22px; cursor: pointer; touch-action: none; }
+.pod-scrub::before { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 4px; border-radius: 2px; background: var(--line); }
+.pod-fill { position: absolute; left: 0; top: 9px; height: 4px; border-radius: 2px; background: var(--warm); width: 0; }
+.pod-ticks i { position: absolute; top: 5px; width: 2px; height: 12px; background: var(--muted); opacity: .6; }
+.pod-scrub:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.pod > * { min-width: 0; }
+.pod-now { display: flex; gap: 8px; align-items: baseline; min-height: 1.5em; font-size: 0.95rem; }
+.pod-spk { font: 600 0.72rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--c, var(--muted)); flex: none; }
+.pod-spk.you { color: var(--accent); }
+.pod-line { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pod-opts { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; color: var(--muted); }
+.pod-opts label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.pod-tx { list-style: none; margin: 0; padding: 4px 6px 4px 0; display: grid; gap: 6px; max-height: 340px; overflow-y: auto; overscroll-behavior: contain;
+  border-top: 1px solid var(--line); padding-top: 10px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.pod-sec { font: 0.72rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 8px; }
+.pod-ln { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 4px 6px; border-radius: 6px; }
+.pod-ln.on { background: color-mix(in srgb, var(--warm) 14%, transparent); }
+.pod-who { font: 600 0.72rem var(--font-mono); text-transform: uppercase; letter-spacing: .04em; color: var(--c, var(--muted)); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; }
+.pod-de { cursor: pointer; line-height: 1.5; }
+.pod-en { display: none; font-size: 0.85rem; color: var(--muted); }
+.pod.show-en .pod-en { display: block; }
+.pod-ln.host .pod-de { font-style: italic; color: var(--muted); font-size: 0.9rem; }
+.pod-w { border-radius: 3px; transition: background .12s; }
+.pod-w.on { background: var(--warm); color: var(--bg); }
+.pod.hide-de .pod-ln:not(.host):not(.shown) .pod-de { filter: blur(5px); user-select: none; }
+.pod-pause { padding-left: 74px; }
+.pod-pill { position: relative; overflow: hidden; font: 600 0.78rem var(--font-body); color: var(--accent); background: transparent; border: 1px dashed var(--accent); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.pod-pill span:last-child { position: relative; }
+.pod-pfill { position: absolute; inset: 0; background: color-mix(in srgb, var(--accent) 22%, transparent); transform-origin: left; transform: scaleX(0); }
+.pod-pause.on .pod-pill { border-style: solid; }
+.spk-L { --c: var(--accent); } .spk-K { --c: var(--good); } .spk-J { --c: var(--warm); } .spk-H { --c: var(--muted); }
+@media (max-width: 560px) {
+  .pod { padding: 12px; }
+  .pod-ln { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .pod-pause { padding-left: 6px; }
+  .pod-time { margin-left: 0; width: 100%; }
+}
