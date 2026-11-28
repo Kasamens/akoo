@@ -9,7 +9,7 @@ Live: **[kasamens.github.io/akoo](https://kasamens.github.io/akoo/)**
 
 - **German course** (`/de`): 25 weekly lessons across A1, A2 and B1, plus a "Learn like a parrot" introduction.
 - **French course** (`/fr`): A1 lessons, with A2 and B1 to follow.
-- **Interactive scenes:** each rule is a toy you can play with, e.g. word blocks that swap places to show verb-second word order.
+- **Interactive scenes:** each rule is an interactive scene, e.g. word blocks that swap places to show verb-second word order.
 - **Audio:** example sentences are read aloud with the browser's speech synthesis.
 - **Hören podcast:** short A1 episodes (two speakers, with a translation toggle) that follow one character's story.
 - **Quizzes and progress:** progress is saved only in your browser (`localStorage`), separately for each language.

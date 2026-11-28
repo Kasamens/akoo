@@ -25,7 +25,7 @@ html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
 const q = new URLSearchParams(location.search), c = q.get('c') || 'de', l = q.get('l') || 'akoo';
 // keep these in step with each course page's <title>
 const LINE = { de: '<b>German</b>, A1 to B1', fr: '<b>French</b> from A1', both: '<b>German or French</b>, A1 to B1' };
-document.getElementById('t').innerHTML = LINE[q.get('both') ? 'both' : c] + ' · one rule a week, as a toy';
+document.getElementById('t').innerHTML = LINE[q.get('both') ? 'both' : c] + ' · one rule a week, made interactive';
 const f = document.getElementById('f');
 f.onload = () => {
   const d = f.contentDocument, st = d.getElementById('stage');

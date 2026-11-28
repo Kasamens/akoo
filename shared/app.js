@@ -46,7 +46,7 @@
     }
     host.classList.add('nogl');
     const note = document.createElement('div'); note.className = 'nogl-note'; note.setAttribute('role', 'note');
-    note.innerHTML = '<p><b>The 3D toy can’t run on this device.</b></p><p>Everything else works: read the rule, listen to the examples and take the quiz below.</p>';
+    note.innerHTML = '<p><b>The interactive 3D scene can’t run on this device.</b></p><p>Everything else works: read the rule, listen to the examples and take the quiz below.</p>';
     host.appendChild(note);
     const noop = () => {};
     return { domElement: document.createElement('canvas'), shadowMap: {}, setPixelRatio: noop, setClearColor: noop, setSize: noop, render: noop };
