@@ -31,8 +31,18 @@
       t.set = h => { if (t.h !== h) { t.h = h; el.innerHTML = h; } return t; };
       tags.push(t); return t;
     };
-    const wp = new T.Vector3();
-    ctx.onFrame(() => tags.forEach(t => { if (!t.on) return; if (t.obj) { t.obj.getWorldPosition(wp); wp.add(t.pos); ctx.place(t.el, wp); } else ctx.place(t.el, t.pos); }));
+    const wp = new T.Vector3(), lp = new T.Vector3();
+    ctx.onFrame(() => tags.forEach(t => {
+      if (!t.on) return;
+      if (t.obj) { t.obj.getWorldPosition(wp); wp.add(t.pos); ctx.place(t.el, wp); } else ctx.place(t.el, t.pos);
+      // a tag with .to gets an ink leader line down to that point
+      if (t.to) {
+        lp.copy(t.to).project(ctx.camera);
+        const y = (1 - lp.y) / 2 * ctx.host.clientHeight;
+        const len = y - parseFloat(t.el.style.top) - t.el.offsetHeight / 2 - 3;
+        t.el.style.setProperty('--lead', Math.max(0, len) + 'px');
+      }
+    }));
 
     K.el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
     K.btn = (label, fn, ghost) => {
@@ -208,8 +218,14 @@
       const b = cfg.build(st);
       const size = S.show(b.tokens, b.keys, { snap: first, text: b.text, roles: b.roles, cap: b.cap, tight: b.tight });
       fitBench(size, S.lines);
-      ctx.fit(Math.max(9, size.w + 2), 4.4 + size.h, K.V(0, 0.6 - (S.lines - 1) * 0.62, 0), K.V(0, 0.3, 1));
-      tag.set(b.tag || '');
+      ctx.fit(Math.max(7.5, size.w + 2), 4.1 + size.h, K.V(0, 0.45 - (S.lines - 1) * 0.62, 0), K.V(0, 0.48, 1));
+      // the tag points at the block the rule changes, and its added ending is picked out
+      const pk = b.pop && b.pop.find(k => S.keys.includes(k));
+      if (pk) { const p = S.at(pk); tag.pos.set(p.x, p.y + 1.3, p.z); tag.to = K.V(p.x, p.y + 0.44, p.z); }
+      else { tag.pos.set(0, 1.4, 0); tag.to = null; }
+      tag.el.classList.toggle('lead', !!pk && !!b.tag);
+      const th = b.tag || '';
+      tag.set(/</.test(th) ? th : th.replace(/(\+\s*)(\S+)\s*$/, '$1<em>$2</em>'));
       if (!first && b.pop) S.pop(b.pop);
       first = false;
       const s = S.sentence();

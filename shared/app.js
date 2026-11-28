@@ -47,10 +47,13 @@
   (function grainOverlay() {
     const c = document.createElement('canvas'); c.width = c.height = 160;
     const g = c.getContext('2d'), img = g.createImageData(160, 160);
-    for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 34; }
+    for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 52; }
     g.putImageData(img, 0, 0);
     const o = document.createElement('div'); o.className = 'grain'; o.setAttribute('aria-hidden', 'true');
-    o.style.backgroundImage = `radial-gradient(ellipse at 50% 45%, transparent 55%, var(--vignette) 100%), url(${c.toDataURL()})`;
+    // large soft blotches like watercolour paper, under the fine grain
+    const mottle = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='3' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .46  0 0 0 0 .4  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(#m)'/></svg>`);
+    o.style.backgroundImage = `radial-gradient(ellipse at 50% 45%, transparent 55%, var(--vignette) 100%), url(${c.toDataURL()}), url("${mottle}")`;
+    o.style.backgroundSize = 'auto, 160px 160px, 420px 420px';
     host.appendChild(o);
   })();
 
@@ -70,9 +73,17 @@
   let W = 1, H = 1;
   const camBase = new THREE.Vector3();
 
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap; // crisp edges suit cel shading
+  const SUN = new THREE.Vector3(0.62, 0.78, 0.3).normalize(); // near the toon shader's light, a little lower so shadows read
+  let key = null, ground = null;
   function addLights(s) {
     s.add(new THREE.HemisphereLight(0xffffff, 0x445566, 0.85));
-    const d = new THREE.DirectionalLight(0xffffff, 0.75); d.position.set(4, 10, 6); s.add(d);
+    key = new THREE.DirectionalLight(0xffffff, 0.75); key.position.set(4, 10, 6);
+    key.castShadow = true;
+    key.shadow.mapSize.set(phone ? 1024 : 2048, phone ? 1024 : 2048);
+    key.shadow.bias = -0.0006; key.shadow.normalBias = 0.02;
+    s.add(key, key.target);
+    ground = makeGround(); s.add(ground.root);
   }
 
   function fitCamera() {
@@ -80,7 +91,7 @@
     const { w, h, target } = fitBox;
     const vfov = THREE.MathUtils.degToRad(camera.fov);
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * camera.aspect);
-    const dist = Math.max((h / 2) / Math.tan(vfov / 2), (w / 2) / Math.tan(hfov / 2)) * 1.12;
+    const dist = Math.max((h / 2) / Math.tan(vfov / 2), (w / 2) / Math.tan(hfov / 2)) * 1.04;
     const dir = (fitBox.dir || new THREE.Vector3(0, 0.45, 1)).clone().normalize();
     camera.position.copy(target).addScaledVector(dir, dist);
     camera.lookAt(target);
@@ -103,23 +114,40 @@
       return mix(mix(mix(hash(i), hash(i + vec3(1.0, 0.0, 0.0)), f.x), mix(hash(i + vec3(0.0, 1.0, 0.0)), hash(i + vec3(1.0, 1.0, 0.0)), f.x), f.y),
                  mix(mix(hash(i + vec3(0.0, 0.0, 1.0)), hash(i + vec3(1.0, 0.0, 1.0)), f.x), mix(hash(i + vec3(0.0, 1.0, 1.0)), hash(i + vec3(1.0, 1.0, 1.0)), f.x), f.y), f.z);
     }`;
+  // three's shadow-map chunks are pulled in so toon meshes catch cel shadows from the key light
   const TOON_V = `
+    #include <common>
+    #include <shadowmap_pars_vertex>
     varying vec3 vN; varying vec3 vW;
     void main() {
-      vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz;
+      vec4 worldPosition = modelMatrix * vec4(position, 1.0); vW = worldPosition.xyz;
       vN = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
-      gl_Position = projectionMatrix * viewMatrix * w;
+      vec3 transformedNormal = normalMatrix * normal;
+      #include <shadowmap_vertex>
+      gl_Position = projectionMatrix * viewMatrix * worldPosition;
     }`;
+  // the scene "paints on" left to right when a lesson opens: uReveal sweeps across uRx (world x range)
+  const REVEAL = { value: 9 }, RX = { value: new THREE.Vector2(-5, 5) };
+  const REVEAL_GLSL = `uniform float uReveal; uniform vec2 uRx;
+    bool hidden(vec3 w, float lead) { return (w.x - uRx.x) / max(uRx.y - uRx.x, 0.001) + (vnoise(w * 2.5) - 0.5) * 0.35 > uReveal + lead; }`;
   const TOON_F = `
     uniform vec3 uColor; uniform vec3 uShade; uniform vec3 uWarm; uniform float uGrain; uniform float uRim; uniform float uEmit;
     varying vec3 vN; varying vec3 vW;
+    #include <common>
+    #include <packing>
+    #include <lights_pars_begin>
+    #include <shadowmap_pars_fragment>
+    #include <shadowmask_pars_fragment>
     ${NOISE}
+    ${REVEAL_GLSL}
     void main() {
+      if (hidden(vW, 0.0)) discard;
       vec3 n = normalize(vN);
       if (!gl_FrontFacing) n = -n;
       vec3 L = normalize(vec3(0.45, 0.85, 0.4));
       float brush = vnoise(vW * vec3(5.0, 1.3, 5.0) + n * 2.0) - 0.5;      // stretched brush strokes wobble the band edges
       float d = dot(n, L) + brush * 0.24;
+      d = min(d, mix(-0.2, d, step(0.5, getShadowMask())));               // a cast shadow drops straight into the shadow band
       vec3 sh = mix(uColor * 0.4, uShade, 0.42);                         // cool teal-violet shadow
       vec3 mid = mix(uColor * 0.84, uShade, 0.07);
       vec3 lit = mix(uColor, uWarm, 0.2) * 1.06;                         // warm amber light
@@ -134,22 +162,24 @@
       gl_FragColor = vec4(c, 1.0);
     }`;
   const INK_V = `
-    uniform float uT; uniform float uMode;
+    uniform float uT; uniform float uMode; varying vec3 vW;
     void main() {
       vec3 dir = uMode < 0.5 ? normal : (uMode < 1.5 ? sign(position) : normalize(position + vec3(0.0001)));
-      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position + dir * uT, 1.0);
+      vec4 w = modelMatrix * vec4(position + dir * uT, 1.0); vW = w.xyz;
+      gl_Position = projectionMatrix * viewMatrix * w;
     }`;
-  const INK_F = `uniform vec3 uInk; void main() { gl_FragColor = vec4(uInk, 1.0); }`;
+  // the ink line is drawn a little ahead of the paint
+  const INK_F = `uniform vec3 uInk; varying vec3 vW; ${NOISE} ${REVEAL_GLSL} void main() { if (hidden(vW, 0.04)) discard; gl_FragColor = vec4(uInk, 1.0); }`;
 
   let tracked = []; // materials that follow theme tokens
   const resolve = c => (typeof c === 'string' && colors[c]) ? colors[c].clone() : new THREE.Color(c);
   function toon(color) {
     const m = new THREE.ShaderMaterial({
-      uniforms: {
+      uniforms: Object.assign(THREE.UniformsUtils.clone(THREE.UniformsLib.lights), {
         uColor: { value: resolve(color) }, uShade: { value: colors.shade.clone() }, uWarm: { value: colors.warm.clone() },
-        uGrain: { value: 0.09 }, uRim: { value: 1 }, uEmit: { value: 0 },
-      },
-      vertexShader: TOON_V, fragmentShader: TOON_F,
+        uGrain: { value: 0.09 }, uRim: { value: 1 }, uEmit: { value: 0 }, uReveal: REVEAL, uRx: RX,
+      }),
+      vertexShader: TOON_V, fragmentShader: TOON_F, lights: true,
     });
     m.userData.key = typeof color === 'string' && colors[color] ? color : null;
     m.userData.toon = true;
@@ -161,7 +191,7 @@
     const t = geometry.type;
     const mode = /Box/.test(t) ? 1 : /Cylinder|Cone/.test(t) ? 2 : 0;
     const m = new THREE.ShaderMaterial({
-      uniforms: { uT: { value: (phone ? 0.022 : 0.032) * (scale || 1) * (0.85 + Math.random() * 0.3) }, uMode: { value: mode }, uInk: { value: colors.ink.clone() } },
+      uniforms: { uT: { value: (phone ? 0.022 : 0.032) * (scale || 1) * (0.85 + Math.random() * 0.3) }, uMode: { value: mode }, uInk: { value: colors.ink.clone() }, uReveal: REVEAL, uRx: RX },
       vertexShader: INK_V, fragmentShader: INK_F, side: THREE.BackSide,
     });
     m.userData.ink = true; tracked.push(m);
@@ -183,9 +213,112 @@
         if (m.userData.key) m.uniforms.uColor.value.copy(colors[m.userData.key]);
         m.uniforms.uShade.value.copy(colors.shade); m.uniforms.uWarm.value.copy(colors.warm);
       } else if (m.userData.ink) m.uniforms.uInk.value.copy(colors.ink);
+      else if (m.userData.floor) paintFloor(m);
       else if (m.userData.sky) { m.uniforms.uTop.value.copy(colors.skyTop); m.uniforms.uLow.value.copy(colors.skyLow); m.uniforms.uGlow.value.copy(colors.warm); }
       else if (m.userData.key && m.color) m.color.copy(colors[m.userData.key]);
     });
+  }
+
+  // ---------- ground: a painted tabletop under every scene, catching cel shadows ----------
+  const FLOOR_V = `varying vec2 vUv; varying vec3 vW; void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`;
+  const FLOOR_F = `uniform vec3 uA; uniform vec3 uB; uniform vec3 uInk; uniform float uFade; varying vec2 vUv; varying vec3 vW; ${NOISE}
+    void main(){
+      float r = length(vUv - 0.5) * 2.0;
+      float s = vnoise(vec3(vW.x * 0.8, 0.0, vW.z * 3.5)) * 0.6 + vnoise(vW * 4.0) * 0.4;   // dragged brush strokes
+      float edge = r + (vnoise(vW * 1.6) - 0.5) * 0.3;                                  // ragged painted edge
+      vec3 c = mix(uA, uB, s);
+      c = mix(c, uInk, smoothstep(0.62, 0.86, edge) * 0.3);
+      c *= 0.94 + vnoise(vW * 18.0) * 0.1;
+      gl_FragColor = vec4(c, (1.0 - smoothstep(0.74, 1.0, edge)) * uFade);
+    }`;
+  function paintFloor(m) {
+    // a wood-toned wash pulled toward the horizon colour, so it sits in both dusk and daylight
+    m.uniforms.uA.value.copy(colors.wood).lerp(colors.skyLow, 0.5).lerp(colors.skyTop, 0.12);
+    m.uniforms.uB.value.copy(colors.wood).lerp(colors.skyLow, 0.32).multiplyScalar(1.06);
+    if (colors.bg.getHSL({}).l < 0.3) { m.uniforms.uA.value.multiplyScalar(1.3); m.uniforms.uB.value.multiplyScalar(1.4); } // lift it off the dusk sky
+    m.uniforms.uInk.value.copy(colors.ink);
+    if (ground) ground.shadow.material.color.copy(colors.ink);
+  }
+  function makeGround() {
+    const root = new THREE.Group(); root.visible = false;
+    const fm = new THREE.ShaderMaterial({
+      uniforms: { uA: { value: new THREE.Color() }, uB: { value: new THREE.Color() }, uInk: { value: new THREE.Color() }, uFade: { value: 1 } },
+      vertexShader: FLOOR_V, fragmentShader: FLOOR_F, transparent: true, depthWrite: false,
+    });
+    fm.userData.floor = true; tracked.push(fm);
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(1, 72), fm);
+    floor.rotation.x = -Math.PI / 2; floor.renderOrder = -2;
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShadowMaterial({ color: colors.ink.clone(), opacity: 0.5, depthWrite: false }));
+    shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.004; shadow.receiveShadow = true; shadow.renderOrder = -1;
+    root.add(floor, shadow);
+    const g = { root, floor, shadow, fm, cur: null, tgt: null, frames: 0 };
+    paintFloor(fm);
+    return g;
+  }
+  const gbox = new THREE.Box3(), tbox = new THREE.Box3();
+  // find what the scene is made of: toon meshes cast shadows and set the size of the tabletop
+  function scanGround() {
+    gbox.makeEmpty();
+    scene.traverse(o => {
+      if (!o.isMesh) return;
+      if (o.userData.hull) { o.castShadow = false; return; }
+      const m = o.material;
+      if (m && m.userData && m.userData.toon && o.visible && o.parent && o.parent.visible) {
+        o.castShadow = true; o.receiveShadow = true;
+        if (!o.userData.noGround) { tbox.setFromObject(o); gbox.union(tbox); }
+      }
+    });
+    if (gbox.isEmpty()) { ground.tgt = null; return; }
+    const c = gbox.getCenter(new THREE.Vector3()), sz = gbox.getSize(new THREE.Vector3());
+    ground.tgt = { x: c.x, y: gbox.min.y - 0.02, z: c.z, r: Math.min(40, Math.max(sz.x, sz.z) * 0.5 + 1.3), h: sz.y };
+  }
+  function tickGround(dt, snap) {
+    if (!ground) return;
+    if (snap || ++ground.frames % 20 === 0) scanGround();
+    const t = ground.tgt;
+    if (!t) { ground.root.visible = false; return; }
+    if (!ground.cur || snap) ground.cur = Object.assign({}, t);
+    const c = ground.cur, k = 1 - Math.exp(-dt * 5);
+    for (const n of ['x', 'y', 'z', 'r', 'h']) c[n] += (t[n] - c[n]) * k;
+    ground.root.visible = true;
+    ground.root.position.set(c.x, c.y, c.z);
+    ground.floor.scale.setScalar(c.r);
+    ground.shadow.scale.setScalar(c.r);
+    key.target.position.set(c.x, c.y, c.z);
+    key.position.copy(key.target.position).addScaledVector(SUN, 20);
+    const sc = key.shadow.camera, R = c.r + c.h * 0.6;
+    if (Math.abs(sc.right - R) > 0.05) { sc.left = -R; sc.right = R; sc.top = R; sc.bottom = -R; sc.near = 1; sc.far = 45; sc.updateProjectionMatrix(); }
+  }
+
+  // a lesson opens: ink draws on, paint follows left to right, the tabletop fades up, letters last
+  function intro() {
+    tickGround(0, true);
+    if (reduce || gbox.isEmpty()) { REVEAL.value = 9; ground.fm.uniforms.uFade.value = 1; return; }
+    RX.value.set(gbox.min.x, gbox.max.x);
+    REVEAL.value = -0.5; ground.fm.uniforms.uFade.value = 0;
+    const faces = new Set();
+    scene.traverse(o => { if (o.isMesh && o.material && o.material.isMeshBasicMaterial && o.material.map) faces.add(o.material); });
+    faces.forEach(m => { m.userData.op = m.opacity; m.opacity = 0; });
+    anims.push({ t: 0, d: 0.95, f: k => {
+      const q = Math.floor(k * 14) / 14; // on twos, like the rest of the motion
+      REVEAL.value = k >= 1 ? 9 : -0.5 + q * 1.95;
+      ground.fm.uniforms.uFade.value = Math.min(1, k * 2.2);
+      faces.forEach(m => { m.opacity = m.userData.op * Math.max(0, Math.min(1, (q - 0.55) / 0.35)); });
+    } });
+    const mine = current;
+    setTimeout(() => { if (current === mine && REVEAL.value < 9) { REVEAL.value = 9; ground.fm.uniforms.uFade.value = 1; faces.forEach(m => { m.opacity = m.userData.op; }); } }, 3000);
+  }
+
+  // painted frame around the stage: inked corners, a lesson tab and a tally of rule changes
+  const chrome = document.createElement('div');
+  chrome.className = 'frame'; chrome.setAttribute('aria-hidden', 'true');
+  chrome.innerHTML = '<i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><span class="lbl"></span><span class="ctr"></span>';
+  host.appendChild(chrome);
+  let tally = 0, lastPop = -1;
+  function bumpTally() {
+    const now = performance.now();
+    if (now - lastPop > 250) { tally++; const el = chrome.querySelector('.ctr'); el.textContent = '✎ ' + tally; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+    lastPop = now;
   }
 
   // ---------- word blocks ----------
@@ -320,6 +453,7 @@
   function pop(target, o) {
     o = o || {};
     const obj = target.pivot || target.group || target;
+    bumpTally();
     if (reduce) {
       // no motion: a brief paint-colour flash instead
       const m = target.mesh && target.mesh.material;
@@ -348,6 +482,17 @@
         m.position.copy(wp).addScaledVector(dir, 0.55 + q * (o.spread || 0.9));
         m.material.opacity = 1 - q;
         if (k >= 1) { scene.remove(m); m.geometry.dispose(); m.material.dispose(); }
+      } });
+    }
+    // a ring of paint spreads across the tabletop under the change
+    if (ground && ground.root.visible) {
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.82, 1, 48), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.7, depthWrite: false }));
+      ring.rotation.x = -Math.PI / 2; ring.position.set(wp.x, ground.root.position.y + 0.012, wp.z); ring.renderOrder = -1;
+      scene.add(ring);
+      anims.push({ t: 0, d: 0.6, f: k => {
+        const q = Math.floor(k * 8) / 8;
+        ring.scale.setScalar(0.5 + q * 1.6); ring.material.opacity = 0.7 * (1 - q);
+        if (k >= 1) { scene.remove(ring); ring.geometry.dispose(); ring.material.dispose(); }
       } });
     }
     const line = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.05), new THREE.MeshBasicMaterial({ color: colors.ink.clone(), transparent: true, opacity: 0.8, depthTest: false }));
@@ -507,7 +652,9 @@
     place(el, vec) {
       v.copy(vec).project(camera);
       const hidden = v.z > 1;
-      el.style.left = ((v.x + 1) / 2 * W) + 'px';
+      // keep the label inside the stage: tags are centred on their point, so clamp by half their width
+      const half = el.offsetWidth / 2 + 8, x = (v.x + 1) / 2 * W;
+      el.style.left = (half * 2 < W ? Math.min(Math.max(x, half), W - half) : x) + 'px';
       el.style.top = ((1 - v.y) / 2 * H) + 'px';
       el.style.visibility = hidden ? 'hidden' : '';
     },
@@ -530,7 +677,7 @@
     controls.innerHTML = '';
     disposeScene(scene);
     scene = new THREE.Scene(); addLights(scene);
-    fitBox = null;
+    fitBox = null; REVEAL.value = 9;
     camera.position.set(0, 4, 12); camera.lookAt(0, 0, 0);
   }
 
@@ -593,7 +740,7 @@
       unmount(); current = { s };
       resize();
       try { current.handle = s.mount(ctx) || {}; } catch (e) { console.error(e); }
-      resize();
+      resize(); tickGround(0, true);
       return;
     }
     unmount();
@@ -617,10 +764,14 @@
     document.getElementById('pager').innerHTML =
       (prev ? `<a href="#${prev.id}">← ${wk(prev)}: ${prev.title}</a>` : '<span></span>') +
       (next ? `<a href="#${next.id}">${wk(next)}: ${next.title} →</a>` : '<span></span>');
+    chrome.querySelector('.lbl').textContent = s.id === 'akoo' ? 'Akoo' : `${wk(s)} · ${s.title}`;
+    tally = 0; chrome.querySelector('.ctr').textContent = '';
     resize();
     try { current.handle = s.mount(ctx) || {}; }
     catch (e) { console.error(e); controls.innerHTML = '<p class="readout">This scene failed to load.</p>'; }
     resize();
+    tally = 0; chrome.querySelector('.ctr').textContent = '';
+    intro();
   }
 
   // #lesson or #lesson/section-id (deep link to a section inside a lesson's page)
@@ -656,6 +807,7 @@
       camera.position.set(camBase.x + Math.sin(t * 0.23) * d, camBase.y + Math.sin(t * 0.17) * d * 0.5, camBase.z);
       camera.lookAt(fitBox.target);
     }
+    tickGround(dt, false);
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
   }
