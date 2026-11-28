@@ -28,7 +28,10 @@ index.html          language picker
 de/ fr/             course pages, scenes/ (one file per lesson), de/podcast/ (episodes + transcripts)
 shared/             engine (app.js), UI kit, quiz, progress, podcast player, analytics, styles
 privacy/ thanks/    privacy notice and thanks page
+de/l/ fr/l/         generated: one static page per lesson (for search engines), see below
+sw.js               service worker (offline); manifest.webmanifest + icons/ (installable app)
 tools/feedback/     Apps Script backend for the feedback form
+tools/pages/        generator for the lesson pages, sitemap.xml, robots.txt and the offline file list
 ```
 
 ## Run it locally
@@ -38,6 +41,26 @@ python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000.
+
+## Lesson pages, sitemap and offline list (re-run after changing lessons or page heads)
+
+Lessons live at hash addresses (`de/#praesens`), which search engines treat as one page. So each lesson also gets its own static page, e.g. `de/l/praesens/`, with its own title, description, canonical URL and the full explainer text readable without JavaScript. With JavaScript on, the page switches its address to `de/#praesens` and the normal app runs in place (no redirect, no second load).
+
+Run this from the repo root whenever a lesson is added or changed, or a course page's `<head>` changes (fonts, Open Graph, etc.), then commit the result:
+
+```bash
+node tools/pages/build.mjs
+```
+
+It rewrites `de/l/`, `fr/l/`, `sitemap.xml`, `robots.txt` and the precache list and cache version inside `sw.js`. Each lesson page's `<head>` is copied from its course's `index.html` at build time, so never edit the generated pages by hand. It needs Node 18 or later and nothing else.
+
+Note: search engines only read `robots.txt` at the domain root (`kasamens.github.io/robots.txt`), so the copy here is informational. Submit `https://kasamens.github.io/akoo/sitemap.xml` in Google Search Console instead.
+
+## Offline and install
+
+Akoo is installable (`manifest.webmanifest`) and works offline through `sw.js`:
+- Pages, the engine, scenes and styles are fetched **network first**: online you always get the latest deploy, offline the saved copy. The cache name includes a hash of the files, so a new deploy replaces the old cache.
+- Podcast episodes (about 1.7 MB each) are saved only when played, or with the **Save for offline** button under the player.
 
 ## Built with
 
