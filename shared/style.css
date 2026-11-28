@@ -374,3 +374,9 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
 @keyframes tally { 0% { transform: rotate(1.5deg) scale(1.25); } 100% { transform: rotate(1.5deg) scale(1); } }
 @media (prefers-reduced-motion: reduce) { #stage .frame .ctr.bump { animation: none; } }
 @media (max-width: 600px) { #stage .frame { inset: 6px; } #stage .frame .c { width: 18px; height: 18px; } #stage .frame .lbl, #stage .frame .ctr { font-size: .6rem; bottom: 6px; } #stage .frame .lbl { display: none; } }
+
+/* no WebGL: a calm note in the stage instead of the 3D toy (shared/app.js) */
+#stage.nogl .tag, #stage.nogl canvas { display: none; }
+#stage .nogl-note { position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; padding: 32px; text-align: center; color: var(--muted); z-index: 1; }
+#stage .nogl-note p { margin: 0; max-width: 36ch; }
+#stage .nogl-note b { color: var(--fg); font-weight: 600; }

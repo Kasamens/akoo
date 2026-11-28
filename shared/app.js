@@ -38,7 +38,19 @@
 
   const host = document.getElementById('stage');
   const controls = document.getElementById('controls');
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  // no WebGL (old device, blocked GPU): a do-nothing renderer keeps routing, text, audio and quiz working
+  const renderer = (function () {
+    const probe = document.createElement('canvas');
+    if (window.WebGLRenderingContext && (probe.getContext('webgl2') || probe.getContext('webgl'))) {
+      try { return new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { /* fall through */ }
+    }
+    host.classList.add('nogl');
+    const note = document.createElement('div'); note.className = 'nogl-note'; note.setAttribute('role', 'note');
+    note.innerHTML = '<p><b>The 3D toy can’t run on this device.</b></p><p>Everything else works: read the rule, listen to the examples and take the quiz below.</p>';
+    host.appendChild(note);
+    const noop = () => {};
+    return { domElement: document.createElement('canvas'), shadowMap: {}, setPixelRatio: noop, setClearColor: noop, setSize: noop, render: noop };
+  })();
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, phone ? 1.5 : 2));
   renderer.setClearColor(0x000000, 0);
   host.prepend(renderer.domElement);
