@@ -48,19 +48,18 @@ privacy/ thanks/    privacy notice, thanks page        tools/feedback/  Apps Scr
 
 ## Status
 
-- **Stage look (committed 28 Nov):** a painted tabletop with cel shadows, a watercolour-paper backdrop, a paint-on reveal when a lesson opens (≤3 s, skipped with reduced motion), an inked frame with a lesson tab and a ✎ tally of rule changes, ink leader lines from labels to the changed block, and a tighter camera. Labels are kept 8px inside the stage (`place()` in `shared/app.js`). Committed locally, **not pushed yet**.
+- **Stage look (committed 28 Nov):** a painted tabletop with cel shadows, a watercolour-paper backdrop, a paint-on reveal when a lesson opens (≤3 s, skipped with reduced motion), an inked frame with a lesson tab and a ✎ tally of rule changes, ink leader lines from labels to the changed block, and a tighter camera. Labels are kept 8px inside the stage (`place()` in `shared/app.js`). Live since 28 Nov.
 - **German:** A1–B1 is done (25 lessons). The A1 podcast has 8 episodes.
 - **French:** A1 is done (8 lessons). A2 and B1 are next.
 
 ## Open to-dos
 
-- Push the stage look to the live site when Kojo says so.
 - French A2 and B1.
 - Podcast episodes beyond A1, and a French podcast.
 
 ## Log (newest first; one line per session)
 
-- 2026-11-28: Reviewed the look upgrade side by side with the old one. Fixed labels clipping at the stage edge on phones. Committed the upgrade. Added README and this CLAUDE.md.
+- 2026-11-28: Reviewed the look upgrade side by side with the old one. Fixed labels clipping at the stage edge on phones. Committed and pushed the upgrade (live). Added README and this CLAUDE.md.
 - 2026-11-27: Look upgrade copied in from akoo-lookdev (uncommitted). Podcast episodes 2–8 with speaker colours. Player placed after the quiz with a "Translate" label. Hören player with A1 episode 1.
 - 2026-11-26: GoatCounter visit counts switched on. Privacy page trimmed.
 - 2026-11-25: Feedback form, Thanks page (credited Raymond Okyere) and privacy page. Flag language picker. French A1 course. Restructured into `/shared`, `/de`, `/fr`. Progress saving with backup/restore. Mobile lessons drawer. Parrot conservation section.
