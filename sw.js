@@ -18,20 +18,36 @@
  * - Anything else (GoatCounter, the feedback form) is not touched.
  */
 // precache:begin (written by tools/pages/build.mjs)
-const VERSION = 'd754f1caf3';
+const VERSION = '22c4ed851d';
 const PRECACHE = [
   "./",
   "manifest.webmanifest",
   "shared/analytics.js",
   "shared/app.js",
   "shared/feedback.js",
+  "shared/fonts/OFL-BebasNeue.txt",
+  "shared/fonts/OFL-Inter.txt",
+  "shared/fonts/OFL-JetBrainsMono.txt",
+  "shared/fonts/bebas-neue-latin-ext.woff2",
+  "shared/fonts/bebas-neue-latin.woff2",
+  "shared/fonts/fonts.css",
+  "shared/fonts/inter-latin-ext.woff2",
+  "shared/fonts/inter-latin.woff2",
+  "shared/fonts/jetbrains-mono-latin-ext.woff2",
+  "shared/fonts/jetbrains-mono-latin.woff2",
   "shared/kit.js",
   "shared/offline.js",
+  "shared/og/akoo-de.jpg",
+  "shared/og/akoo-fr.jpg",
+  "shared/og/akoo.jpg",
   "shared/podcast.js",
   "shared/progress.js",
+  "shared/review.js",
   "shared/style.css",
   "shared/thanks.json",
   "shared/ui.js",
+  "shared/vendor/three.min.js",
+  "shared/vocab.js",
   "icons/apple-touch-icon.png",
   "icons/icon-192.png",
   "icons/icon-512.png",
