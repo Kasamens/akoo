@@ -32,6 +32,11 @@
 
   MM.register({
     id: 'present-er', day: 1, week: 1,
+    vocab: [
+      ['habiter', 'to live (somewhere)'], ['travailler', 'to work'], ['parler', 'to speak'], ['être', 'to be'],
+      ['avoir', 'to have'], ['avoir faim', 'to be hungry'], ['fatigué', 'tired'],
+      ['professeure', 'teacher (woman)', 'f'],
+    ],
     title: 'Le présent',
     tagline: 'A French verb changes its ending for each person: je parle, nous parlons, vous parlez.',
     prompt: 'Pick a person and a verb. Watch the magenta verb block change its ending.',
@@ -130,6 +135,11 @@
 
   MM.register({
     id: 'articles', day: 2, week: 1,
+    vocab: [
+      ['café', 'coffee', 'm'], ['gare', 'station', 'f'], ['frère', 'brother', 'm'], ['sœur', 'sister', 'f'],
+      ['école', 'school', 'f'], ['ami', 'friend', 'm'], ['homme', 'man', 'm'], ['maison', 'house', 'f'], ['voiture', 'car', 'f'],
+      ['livre', 'book', 'm'],
+    ],
     title: 'Le, la, un, une',
     tagline: 'Every French noun is masculine or feminine, and the little word in front of it tells you which.',
     prompt: 'Pick a noun, then switch between “the” and “a”, and between one and several.',
@@ -227,6 +237,11 @@
 
   MM.register({
     id: 'adjectifs', day: 3, week: 1,
+    vocab: [
+      ['maison', 'house', 'f'], ['appartement', 'flat', 'm'], ['livre', 'book', 'm'], ['sac', 'bag', 'm'],
+      ['voiture', 'car', 'f'], ['petit, petite', 'small'], ['grand, grande', 'big, tall'], ['noir, noire', 'black'],
+      ['beau, belle', 'beautiful'], ['intéressant, intéressante', 'interesting'],
+    ],
     title: 'Les adjectifs',
     tagline: 'Adjectives match the noun (add -e for feminine) and most go after it: une voiture noire.',
     prompt: 'Pick a noun and an adjective. Watch where the orange adjective lands, and when it grows an -e.',
@@ -315,6 +330,11 @@
 
   MM.register({
     id: 'negation', day: 4, week: 1,
+    vocab: [
+      ['ne … pas', 'not'], ['ne … plus', 'no longer'], ['ne … jamais', 'never'], ['parler', 'to speak'],
+      ['écouter', 'to listen (to)'], ['aimer', 'to like, to love'], ['fumer', 'to smoke'], ['radio', 'radio', 'f'],
+      ['thé', 'tea', 'm'], ['dimanche', 'Sunday', 'm'],
+    ],
     title: 'Ne … pas',
     tagline: 'French negation is two words that clamp around the verb: je ne parle pas.',
     prompt: 'Pick a person, a verb and a kind of “not”. Watch the two green blocks clamp around the verb.',
@@ -415,6 +435,11 @@
 
   MM.register({
     id: 'questions', day: 5, week: 1,
+    vocab: [
+      ['est-ce que', 'question opener'], ['où', 'where'], ['comment', 'how'], ['qu’est-ce que', 'what'],
+      ['ici', 'here'], ['ce soir', 'tonight'], ['chambre', 'room', 'f'], ['gare', 'station', 'f'],
+      ['chat', 'cat', 'm'],
+    ],
     title: 'Poser une question',
     tagline: 'Three ways to ask a yes/no question: raise your voice, add est-ce que, or swap verb and subject.',
     prompt: 'Pick a sentence and a question style. Watch the blocks move, from relaxed to formal.',
@@ -521,6 +546,11 @@
 
   MM.register({
     id: 'aller-futur', day: 6, week: 1,
+    vocab: [
+      ['aller', 'to go'], ['faire', 'to do, to make'], ['faire les courses', 'to do the shopping'],
+      ['venir de', 'to come from'], ['manger', 'to eat'], ['voyager', 'to travel'], ['marché', 'market', 'm'],
+      ['restaurant', 'restaurant', 'm'], ['fête', 'party', 'f'],
+    ],
     title: 'Aller + infinitif',
     tagline: 'To talk about the future, use aller plus an infinitive: je vais manger (I’m going to eat).',
     prompt: 'Pick a person and a plan, then switch from “now” to “soon”. Watch aller arrive and the verb change into its infinitive.',
@@ -621,6 +651,11 @@
 
   MM.register({
     id: 'partitif', day: 7, week: 1,
+    vocab: [
+      ['prendre', 'to take, to have (food, drink)'], ['marché', 'market', 'm'], ['travail', 'work', 'm'],
+      ['thé', 'tea', 'm'], ['eau', 'water', 'f'], ['pain', 'bread', 'm'], ['soupe', 'soup', 'f'],
+      ['viande', 'meat', 'f'], ['plage', 'beach', 'f'],
+    ],
     title: 'Au, du, de la',
     tagline: 'à and de melt into le and les (au, aux, du, des), and “some” is du, de la or des.',
     prompt: 'Pick a phrase. Places go with aller and venir, food with prendre. Watch the copper block merge.',
@@ -727,6 +762,10 @@
 
   MM.register({
     id: 'possessifs', day: 8, week: 1,
+    vocab: [
+      ['mère', 'mother', 'f'], ['frère', 'brother', 'm'], ['sœur', 'sister', 'f'], ['amie', 'friend (woman)', 'f'],
+      ['chien', 'dog', 'm'], ['clé', 'key', 'f'], ['passeport', 'passport', 'm'], ['parents', 'parents', 'pl'],
+    ],
     title: 'Mon, ma, mes',
     tagline: 'The possessive matches the thing owned, not the owner: sa sœur can mean his sister or her sister.',
     prompt: 'Pick an owner and a family member. Watch the copper possessive follow the noun’s gender.',

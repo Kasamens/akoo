@@ -11,6 +11,7 @@
  *     prompt: 'Short instruction for the interactive, shown above the stage.',
  *     body: '<section>...</section>',  // HTML explainer below the stage; a <div data-quiz></div> gets the quiz
  *     quiz: [ ...questions ],          // see quiz() below
+ *     vocab: [ [word, translation, gender?], ... ],  // optional word list with listen buttons (shared/vocab.js); gender 'm' | 'f' | 'n' | 'pl' for nouns
  *     mount(ctx) { ... return { dispose() {} } }  // dispose optional
  *   });
  *
@@ -758,6 +759,7 @@
     const qel = body.querySelector('[data-quiz]');
     if (qel && s.quiz) quiz(qel, s.quiz, s.id);
     if (window.AkooPodcast) window.AkooPodcast.mount(body, s.id); // adds a Hören player if this lesson has an episode
+    if (window.AkooVocab) window.AkooVocab.mount(body, s); // word list with listen buttons, if the lesson has vocab
     if (window.AkooProgress && !isPage) window.AkooProgress.open(s.id, s.id !== 'akoo');
     paintContinue(s);
     nav.querySelectorAll('a[data-id]').forEach(a => a.setAttribute('aria-current', a.dataset.id === s.id ? 'page' : 'false'));

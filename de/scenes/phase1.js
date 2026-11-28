@@ -19,6 +19,10 @@
 
   MM.register({
     id: 'nebensaetze', day: 9, week: 2,
+    vocab: [
+      ['weil', 'because'], ['dass', 'that'], ['wenn', 'if, when'], ['ob', 'whether'], ['Zug', 'train', 'm'],
+      ['Flugzeug', 'plane', 'n'], ['Wetter', 'weather', 'n'], ['Verspätung', 'delay', 'f'],
+    ],
     title: 'Nebensätze',
     tagline: 'After weil, dass, wenn and ob, the conjugated verb goes to the very end of its clause.',
     prompt: 'Pick a connector, then change the sentence shape. Watch the magenta block: the conjugated verb.',
@@ -152,6 +156,12 @@
 
   MM.register({
     id: 'perfekt-praeteritum', day: 10, week: 2,
+    vocab: [
+      ['fahren (ist gefahren)', 'to go, travel'], ['fliegen (ist geflogen)', 'to fly'],
+      ['gehen (ist gegangen)', 'to go, walk'], ['schlafen (hat geschlafen)', 'to sleep'],
+      ['frühstücken', 'to have breakfast'], ['Hotel', 'hotel', 'n'], ['Urlaub', 'holiday', 'm'],
+      ['Wetter', 'weather', 'n'], ['gestern', 'yesterday'],
+    ],
     title: 'Perfekt vs. Präteritum',
     tagline: 'Speak in Perfekt (haben/sein + participle at the end); write stories in Präteritum, one verb in position 2.',
     prompt: 'Pick a verb, then switch tense. The Präteritum block splits into haben/sein (position 2) and the participle (the end).',
@@ -301,6 +311,11 @@
 
   MM.register({
     id: 'wechselpraepositionen', day: 11, week: 2,
+    vocab: [
+      ['stellen', 'to put (standing)'], ['stehen', 'to stand, be (upright)'], ['legen', 'to lay, put (flat)'],
+      ['liegen', 'to lie, be (flat)'], ['hängen', 'to hang'], ['Katze', 'cat', 'f'], ['Tisch', 'table', 'm'],
+      ['Stuhl', 'chair', 'm'], ['Wand', 'wall', 'f'], ['Schublade', 'drawer', 'f'],
+    ],
     title: 'Wechselpräpositionen',
     tagline: 'Nine prepositions take the Dativ for a location (Wo?) and the Akkusativ for a direction (Wohin?).',
     prompt: 'Pick a preposition, then switch between Wo? (staying put) and Wohin? (moving somewhere). Watch the article flip.',
@@ -492,6 +507,11 @@
 
   MM.register({
     id: 'reflexive-verben', day: 12, week: 2,
+    vocab: [
+      ['sich freuen auf', 'to look forward to'], ['sich treffen', 'to meet'], ['sich einleben', 'to settle in'],
+      ['sich bewerben', 'to apply (for a job)'], ['sich die Zähne putzen', 'to brush your teeth'],
+      ['sich etwas wünschen', 'to wish for something'], ['Jacke', 'jacket', 'f'], ['Wochenende', 'weekend', 'n'],
+    ],
     title: 'Reflexive Verben',
     tagline: 'The action points back at the subject: ich wasche mich, but ich wasche mir die Hände.',
     prompt: 'Pick a person and a verb. Switch to Dativ to add an object and watch the pronoun change for ich and du.',
@@ -650,6 +670,10 @@
 
   MM.register({
     id: 'adjektivendungen', day: 13, week: 2,
+    vocab: [
+      ['Tisch', 'table', 'm'], ['Küche', 'kitchen', 'f'], ['Zimmer', 'room', 'n'], ['Brötchen', 'bread roll', 'n'],
+      ['Kollege', 'colleague', 'm'], ['Haus', 'house', 'n'], ['neu', 'new'], ['alt', 'old'], ['hell', 'bright'],
+    ],
     title: 'Adjektivendungen',
     tagline: 'The adjective ending depends on case, gender and the article in front; if the article already shows the gender, the adjective mostly takes -e or -en.',
     prompt: 'Pick an article type, then tap a pigeonhole (or use the case and gender chips). The lit block is the ending.',
@@ -822,6 +846,11 @@
 
   MM.register({
     id: 'komparativ-superlativ', day: 14, week: 2,
+    vocab: [
+      ['schnell', 'fast'], ['groß, größer', 'big, bigger'], ['teuer, teurer', 'expensive, more expensive'],
+      ['gern, lieber', 'gladly, rather'], ['als', 'than'], ['so … wie', 'as … as'], ['Zug', 'train', 'm'],
+      ['Flugzeug', 'plane', 'n'], ['Fahrrad', 'bicycle', 'n'],
+    ],
     title: 'Komparativ & Superlativ',
     tagline: 'schnell → schneller (als) → am schnellsten: add -er to compare two things, am …sten for the top.',
     prompt: 'Pick an adjective and watch the three chimneys rise. Tap a step to hear it in a sentence.',

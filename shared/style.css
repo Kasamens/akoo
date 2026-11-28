@@ -384,7 +384,6 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
   outline: 2.5px solid var(--accent); outline-offset: 3px; box-shadow: 0 0 0 1.5px var(--ink);
 }
 
-
 /* sidebar "Review" link */
 .revlink { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; text-decoration: none; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface) var(--grain); font-weight: 600; font-size: 0.92rem; }
 .revlink:hover { border-color: var(--fg); }
@@ -398,3 +397,13 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
 #body .rv-sum, #body .rv-empty { color: var(--muted); }
 #body .rv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 #body .rv-list span { font: 500 0.78rem var(--font-mono); color: var(--muted); min-width: 12ch; display: inline-block; }
+
+/* lesson word list */
+#body .vsub { color: var(--muted); font-size: 0.9rem; }
+#body .vlist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 6px 10px; }
+#body .vlist li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 7px 10px; background: var(--surface) var(--grain); border: 1px solid var(--line); border-radius: 8px; }
+#body .vlist .vw { font-weight: 600; }
+#body .vlist .va { font-weight: 500; color: var(--muted); }
+#body .vlist .vg { font: 500 0.66rem var(--font-mono); text-transform: uppercase; text-decoration: none; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+#body .vlist .ven { color: var(--muted); font-size: 0.88rem; flex: 1 1 auto; }
+#body .vlist .say { margin-left: auto; }
