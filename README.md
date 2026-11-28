@@ -1,0 +1,44 @@
+# Akoo
+
+**Learn German or French from A1 to B1, one grammar rule a week.**
+Live: **[kasamens.github.io/akoo](https://kasamens.github.io/akoo/)**
+
+*Akoo* means parrot in Twi. If a parrot can learn to talk, so can you. Each lesson takes one grammar rule and turns it into a small painted 3D world you can interact with, plus spoken examples, a short explainer and a five-question quiz.
+
+## What's in it
+
+- **German course** (`/de`): 25 weekly lessons across A1, A2 and B1, plus a "Learn like a parrot" introduction.
+- **French course** (`/fr`): A1 lessons, with A2 and B1 to follow.
+- **Interactive scenes:** each rule is a toy you can play with, e.g. word blocks that swap places to show verb-second word order.
+- **Audio:** example sentences are read aloud with the browser's speech synthesis.
+- **Hören podcast:** short A1 episodes (two speakers, with a translation toggle) that follow one character's story.
+- **Quizzes and progress:** progress is saved only in your browser (`localStorage`), separately for each language.
+
+## How it's built
+
+- **Plain HTML, CSS and JavaScript:** no framework and no build step. It's served as a static site on GitHub Pages.
+- **Three.js:** cel-shaded "painterly" materials with ink outlines, and animation stepped at 12 fps ("on twos") for a hand-drawn feel.
+- **Scene registry:** each lesson is one `register({ id, title, prompt, body, quiz, mount(ctx) })` call. The shared engine in `shared/app.js` handles routing, the renderer, theming, quizzes and cleanup.
+- **Accessibility:** respects `prefers-reduced-motion`, and has light and dark themes.
+- **Privacy-friendly stats:** cookie-free page counts via GoatCounter. Nothing is counted on localhost, in automated browsers, or when Global Privacy Control is set. See `/privacy`.
+- **Feedback form:** stored in a Google Sheet through a small Apps Script (`tools/feedback/`).
+
+```
+index.html          language picker
+de/ fr/             course pages, scenes/ (one file per lesson), de/podcast/ (episodes + transcripts)
+shared/             engine (app.js), UI kit, quiz, progress, podcast player, analytics, styles
+privacy/ thanks/    privacy notice and thanks page
+tools/feedback/     Apps Script backend for the feedback form
+```
+
+## Run it locally
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open http://localhost:8000.
+
+## Built with
+
+Designed and built with [Claude Code](https://claude.com/claude-code), using AI-assisted development for the engine, scenes and content, with every lesson reviewed by hand.
