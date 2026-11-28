@@ -384,3 +384,17 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
   outline: 2.5px solid var(--accent); outline-offset: 3px; box-shadow: 0 0 0 1.5px var(--ink);
 }
 
+
+/* sidebar "Review" link */
+.revlink { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; text-decoration: none; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface) var(--grain); font-weight: 600; font-size: 0.92rem; }
+.revlink:hover { border-color: var(--fg); }
+.revlink .rv-n { font: 500 0.72rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.revlink.has-due .rv-n { color: var(--ink); background: var(--warm); border-radius: 999px; padding: 2px 8px; }
+.revlink[aria-current="page"] { background: var(--fg); color: var(--surface); border-color: var(--fg); }
+.revlink[aria-current="page"] .rv-n { color: inherit; }
+.revlink[aria-current="page"].has-due .rv-n { color: var(--ink); }
+
+/* review page */
+#body .rv-sum, #body .rv-empty { color: var(--muted); }
+#body .rv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+#body .rv-list span { font: 500 0.78rem var(--font-mono); color: var(--muted); min-width: 12ch; display: inline-block; }
