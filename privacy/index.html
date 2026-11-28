@@ -11,6 +11,10 @@ try { const t = (JSON.parse(localStorage.getItem('akoo:prefs')) || {}).theme; if
 <link rel="preload" href="../shared/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../shared/fonts/fonts.css">
 <link rel="stylesheet" href="../shared/style.css">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="theme-color" content="#11151b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ece3d0" media="(prefers-color-scheme: light)">
 <style>
 .page { max-width: 720px; margin: 0 auto; padding: calc(40px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px)); display: grid; gap: 22px; }
 .page h1 { font-size: clamp(3rem, 10vw, 4.6rem); }
@@ -30,10 +34,12 @@ try { const t = (JSON.parse(localStorage.getItem('akoo:prefs')) || {}).theme; if
     <li>Your learning progress, which is saved in your browser.</li>
     <li>Feedback you choose to send, with the page you were on, basic details about your device, and anything you add, such as your name.</li>
     <li>Anonymous visit counts that show which pages and lessons are used.</li>
+    <li>Offline copies of Akoo's own pages, and of any podcast episode you play or save, kept in your browser so lessons work without a connection. They hold nothing about you, and clearing this site's data removes them.</li>
   </ul>
 
   <h2>Why</h2>
   <p>To run Akoo and improve it.</p>
 </main>
 <script src="../shared/feedback.js"></script>
+<script src="../shared/offline.js"></script>
 <script src="../shared/analytics.js" defer></script>

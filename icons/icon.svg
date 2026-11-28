@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#11151b"/>
+  <circle cx="256" cy="256" r="200" fill="#efe3c8"/>
+  <!-- tail -->
+  <path d="M236 372 L206 452 L262 452 L278 380 Z" fill="#c8402e" stroke="#0b0e13" stroke-width="12" stroke-linejoin="round"/>
+  <!-- body -->
+  <path d="M196 214 C 176 290, 196 360, 250 388 C 312 380, 336 318, 320 240 C 306 176, 214 152, 196 214 Z" fill="#8f949b" stroke="#0b0e13" stroke-width="12" stroke-linejoin="round"/>
+  <!-- wing -->
+  <path d="M232 262 C 226 318, 246 356, 288 366 C 306 330, 300 280, 272 252 Z" fill="#6b7078" stroke="#0b0e13" stroke-width="10" stroke-linejoin="round"/>
+  <!-- head -->
+  <circle cx="246" cy="178" r="64" fill="#a7abb1" stroke="#0b0e13" stroke-width="12"/>
+  <!-- face patch + eye -->
+  <ellipse cx="226" cy="172" rx="24" ry="20" fill="#efe3c8"/>
+  <circle cx="226" cy="172" r="9" fill="#0b0e13"/>
+  <!-- beak -->
+  <path d="M190 170 C 160 176, 152 206, 170 226 C 178 210, 192 200, 204 198 Z" fill="#1a1c22" stroke="#0b0e13" stroke-width="8" stroke-linejoin="round"/>
+</svg>
