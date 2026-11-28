@@ -1,0 +1,16 @@
+{
+  "name": "akoo-smoke-test",
+  "private": true,
+  "type": "module",
+  "description": "Opens every Akoo lesson in a headless browser and reports what is broken",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "test": "node smoke.mjs",
+    "browser": "playwright-core install chromium"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.1"
+  }
+}

@@ -1,0 +1,41 @@
+#!/bin/sh
+# Optional git pre-push hook for Akoo. Pushing to main publishes the live site, so this runs the
+# smoke test on the commit being pushed to main and stops the push if anything fails.
+# Pushes to other branches are not tested.
+#
+# Install (from the repo root):  cp tools/test/pre-push "$(git rev-parse --git-common-dir)/hooks/pre-push"
+# Skip it once:                  git push --no-verify
+# Remove it:                     rm "$(git rev-parse --git-common-dir)/hooks/pre-push"
+
+root=$(git rev-parse --show-toplevel) || exit 1
+tests="$root/tools/test"
+copy=""
+trap '[ -n "$copy" ] && rm -rf "$copy"' EXIT
+trap 'exit 1' INT TERM
+
+# git sends one line per ref being pushed
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$remote_ref" = "refs/heads/main" ] || continue
+  case "$local_sha" in *[!0]*) ;; *) continue ;; esac # all zeros: the branch is being deleted
+
+  if [ ! -f "$tests/smoke.mjs" ]; then
+    echo "pre-push: WARNING: no tools/test/smoke.mjs in this checkout, so main is being pushed UNTESTED." >&2
+    continue
+  fi
+  if [ ! -d "$tests/node_modules" ]; then
+    echo "pre-push: the smoke test is not set up. Run: npm --prefix tools/test install" >&2
+    exit 1
+  fi
+
+  # test exactly what is being pushed, not whatever happens to be in the folder right now
+  copy=$(mktemp -d "${TMPDIR:-/tmp}/akoo-pre-push.XXXXXX") || exit 1
+  git archive "$local_sha" | tar -x -C "$copy" || exit 1
+  echo "pre-push: testing $(git rev-parse --short "$local_sha") before it goes live..."
+  if ! node "$tests/smoke.mjs" --root "$copy" </dev/null; then
+    echo "pre-push: push stopped. Fix the failures above (git push --no-verify skips this check)." >&2
+    exit 1
+  fi
+  rm -rf "$copy"
+  copy=""
+done
+exit 0

@@ -39,6 +39,48 @@ python3 -m http.server 8000
 
 Then open http://localhost:8000.
 
+## Test before you push
+
+Pushing to `main` publishes the live site, so run the smoke test first. Set it up once (needs Node 18.17 or newer), then run it:
+
+```bash
+npm --prefix tools/test install
+```
+
+```bash
+npm --prefix tools/test test
+```
+
+It uses the Google Chrome or Edge already on your machine. If you have neither, run `npm --prefix tools/test run browser` to download Chromium.
+
+It serves the repo the way GitHub Pages does (under `/akoo/`, case-sensitive file names), finds every course and lesson by itself, and prints a pass or fail line for each. A run takes a minute or two. It fails if:
+
+- a lesson or page has a console error or page error, including a missing local file
+- a lesson's 3D stage is missing or blank, or its title or body is missing
+- a quiz doesn't have exactly 5 questions
+- a lesson is registered but not in the menu, two lessons share an id, or a scene file registers nothing
+- moving from one lesson to the next throws an error
+- the landing, privacy or thanks page doesn't load cleanly
+- a test run or localhost preview would be counted by GoatCounter
+
+Test runs are never counted: the site skips localhost and automated browsers, and the test also blocks analytics and the feedback form. It needs an internet connection for anything the pages load from the web (today Three.js and the fonts).
+
+To check only some of it, add part of a name, such as `de/praesens`, `fr/` or `privacy`:
+
+```bash
+npm --prefix tools/test test -- fr/
+```
+
+### Optional: run it automatically on push
+
+This installs a git hook that tests the commit you are pushing to `main` and stops the push if it fails. Pushes to other branches are not tested. Nothing installs it for you.
+
+```bash
+cp tools/test/pre-push "$(git rev-parse --git-common-dir)/hooks/pre-push"
+```
+
+Skip it once with `git push --no-verify`, or delete the copied file to remove it. If you already have a `pre-push` hook, merge the two by hand instead of copying over it.
+
 ## Built with
 
 Designed and built with [Claude Code](https://claude.com/claude-code), using AI-assisted development for the engine, scenes and content, with every lesson reviewed by hand.
