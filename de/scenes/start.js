@@ -54,6 +54,11 @@
 
   MM.register({
     id: 'akoo', day: 0, week: 0,
+    vocab: [
+      ['heißen', 'to be called'], ['kommen', 'to come'], ['Kaffee', 'coffee', 'm'],
+      ['ich hätte gern', 'I would like'], ['verstehen', 'to understand'], ['wiederholen', 'to repeat'],
+      ['bitte', 'please'],
+    ],
     title: 'Learn like a parrot',
     tagline: 'Akoo means parrot. Parrots learn to talk from a social flock, in whole phrases, with lots of solo practice. You can borrow all three habits.',
     prompt: 'Pick a phrase, then switch between “Chunk” and “Wort für Wort”. Press Nachsprechen and say it back, like Akoo does.',

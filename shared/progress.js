@@ -8,6 +8,15 @@
   const PASS = 4; // a lesson counts as finished at 4/5 or better
   const today = () => new Date().toISOString().slice(0, 10);
   const blank = () => ({ v: 1, created: today(), last: null, lessons: {}, review: [], prefs: {} });
+  // Spaced review (shared/review.js) lives in data.review, a field the v1 format has always had (empty until now),
+  // so the format stays v1 and every existing save and AKOO1- backup code still loads.
+  // Each item: { lesson: 'satzbau', q: 'q1a2b3c4d' (hash of the question), step: 0-3, due: 'YYYY-MM-DD', n: times missed }
+  const DAY = /^\d{4}-\d{2}-\d{2}$/;
+  const cleanReview = list => (Array.isArray(list) ? list : []).filter(r => r && typeof r === 'object'
+    && /^[a-z0-9-]+$/.test(r.lesson) && /^q[0-9a-f]{1,12}$/.test(r.q) && DAY.test(r.due)).map(r => ({
+    lesson: r.lesson, q: r.q, due: r.due,
+    step: Math.max(0, Math.min(3, Math.floor(+r.step) || 0)), n: Math.max(1, Math.min(999, Math.floor(+r.n) || 1)),
+  }));
 
   let ok = true;
   try { const t = '__akoo_test'; localStorage.setItem(t, '1'); localStorage.removeItem(t); } catch (e) { ok = false; }
@@ -31,7 +40,7 @@
     if (!ok) return blank();
     try {
       const d = JSON.parse(localStorage.getItem(KEY));
-      if (d && d.v === 1 && typeof d.lessons === 'object') return Object.assign(blank(), d);
+      if (d && d.v === 1 && typeof d.lessons === 'object') { const out = Object.assign(blank(), d); out.review = cleanReview(d.review); return out; }
     } catch (e) { /* unreadable save: start fresh rather than break the site */ }
     return blank();
   }
@@ -84,6 +93,9 @@
     importCode,
     reset() { data = blank(); save(); },
     count: () => Object.values(data.lessons).filter(l => l.done).length,
+    // spaced review: fn gets the live item list to change in place; the result is cleaned and saved
+    review: () => data.review,
+    updateReview(fn) { fn(data.review); data.review = cleanReview(data.review); save(); },
   };
 
   // ---------- export / import ----------
@@ -127,12 +139,16 @@
     }
     if (inc.last && inc.last.id && (!data.last || inc.last.at > data.last.at)) data.last = { id: String(inc.last.id), at: String(inc.last.at) };
     if (inc.created) data.created = earliest(data.created, String(inc.created).slice(0, 10));
-    if (Array.isArray(inc.review)) {
-      const key = r => `${r.lesson}#${r.q}`, have = new Set(data.review.map(key));
-      inc.review.forEach(r => { if (r && r.lesson && !have.has(key(r))) data.review.push(r); });
-    }
+    // review items: merge by question; where both have one, keep the more cautious schedule (lower step, earlier due)
+    let reviewAdded = 0;
+    const key = r => `${r.lesson}#${r.q}`, have = new Map(data.review.map(r => [key(r), r]));
+    cleanReview(inc.review).forEach(r => {
+      const cur = have.get(key(r));
+      if (!cur) { data.review.push(r); have.set(key(r), r); reviewAdded++; return; }
+      cur.step = Math.min(cur.step, r.step); cur.due = earliest(cur.due, r.due); cur.n = Math.max(cur.n, r.n);
+    });
     save();
-    return { ok: true, added, total: Object.values(data.lessons).filter(l => l.done).length };
+    return { ok: true, added, reviewAdded, total: Object.values(data.lessons).filter(l => l.done).length };
   }
 
 
@@ -195,7 +211,8 @@
           if (!r.ok) { say(r.error, 'err'); return; }
           if (window.AkooStats) AkooStats.event('restore');
           close();
-          say(r.added ? `Restored. ${lessonsWord(r.added)} added; ${r.total} finished in total.` : `Restored. Nothing new to add; ${r.total} finished in total.`, 'ok');
+          const rv = r.reviewAdded ? ` ${r.reviewAdded} review question${r.reviewAdded === 1 ? '' : 's'} added.` : '';
+          say((r.added ? `Restored. ${lessonsWord(r.added)} added; ${r.total} finished in total.` : `Restored. Nothing new to add; ${r.total} finished in total.`) + rv, 'ok');
         };
         panel.querySelector('[data-a="go"]').addEventListener('click', () => run(ta.value));
         panel.querySelector('[data-a="pick"]').addEventListener('click', () => file.click());
@@ -203,8 +220,9 @@
         return ta;
       },
       reset() {
-        const n = P.count();
-        panel.innerHTML = `<p>Delete all saved progress in this browser${n ? ` (${lessonsWord(n)} finished)` : ''}? This can't be undone. Back up first if you might want it later.</p>
+        const n = P.count(), r = data.review.length;
+        const what = [n ? lessonsWord(n) + ' finished' : '', r ? `${r} question${r === 1 ? '' : 's'} waiting for review` : ''].filter(Boolean).join(', ');
+        panel.innerHTML = `<p>Delete all saved progress in this browser${what ? ` (${what})` : ''}, review questions included? This can't be undone. Back up first if you might want it later.</p>
           <div class="row"><button type="button" class="btn danger" data-a="yes">Yes, reset</button><button type="button" class="btn ghost" data-a="no">Cancel</button></div>`;
         panel.querySelector('[data-a="yes"]').addEventListener('click', () => { P.reset(); close(); say('Progress reset.', 'ok'); if (window.AkooStats) AkooStats.event('reset'); });
         panel.querySelector('[data-a="no"]').addEventListener('click', () => { const b = btns.find(x => x.dataset.prog === 'reset'); close(); say('', ''); b.focus(); });

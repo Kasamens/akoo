@@ -29,6 +29,11 @@
 
   MM.register({
     id: 'als-wenn-bevor-nachdem', day: 15, week: 2,
+    vocab: [
+      ['als', 'when (one time in the past)'], ['wenn', 'when, whenever'], ['bevor', 'before'], ['nachdem', 'after'],
+      ['ankommen', 'to arrive'], ['umziehen', 'to move house'], ['Spaziergang', 'walk', 'm'],
+      ['Feierabend', 'end of the working day', 'm'],
+    ],
     title: 'als, wenn, bevor, nachdem',
     tagline: 'Time clauses: als for one time in the past, wenn for every time or the future, bevor and nachdem for the order of events.',
     prompt: 'Pick a connector. The timeline shows when each clause happens; the row shows the verb going to the end.',
@@ -175,6 +180,11 @@
 
   MM.register({
     id: 'relativsaetze', day: 16, week: 3,
+    vocab: [
+      ['Kollegin', 'colleague (woman)', 'f'], ['Nachbar', 'neighbour', 'm'], ['Stadt', 'town, city', 'f'],
+      ['Laptop', 'laptop', 'm'], ['Balkon', 'balcony', 'm'], ['See', 'lake', 'm'], ['Strand', 'beach', 'm'],
+      ['helfen', 'to help (+ dative)'], ['übernachten', 'to stay the night'],
+    ],
     title: 'Relativsätze',
     tagline: 'A relative clause describes a noun: the pronoun takes the noun’s gender and number, but its case comes from its own clause.',
     prompt: 'Pick a gender and a case, then join the two sentences. The repeated noun turns into the relative pronoun.',
@@ -289,6 +299,11 @@
 
   MM.register({
     id: 'infinitiv-mit-zu', day: 17, week: 3,
+    vocab: [
+      ['anfangen', 'to begin'], ['vorhaben', 'to plan'], ['vergessen', 'to forget'], ['finden', 'to find'],
+      ['abgeben', 'to hand in'], ['um … zu', 'in order to'], ['Lust', 'wish, feeling like', 'f'],
+      ['Sport', 'sport, exercise', 'm'], ['Müll', 'rubbish', 'm'],
+    ],
     title: 'Infinitiv mit zu',
     tagline: 'After many verbs and phrases, the second verb goes to the end with zu in front of it; um … zu says why you do something.',
     prompt: 'Pick a pattern and watch the press put zu in place. Press “Nochmal” to replay.',
@@ -399,6 +414,10 @@
 
   MM.register({
     id: 'konjunktiv-2', day: 18, week: 3,
+    vocab: [
+      ['hätte', 'would have'], ['wäre', 'would be'], ['würde', 'would'], ['könnte', 'could'], ['Miete', 'rent', 'f'],
+      ['Geld', 'money', 'n'], ['Doppelzimmer', 'double room', 'n'], ['Frühstück', 'breakfast', 'n'],
+    ],
     title: 'Konjunktiv II',
     tagline: 'For wishes, unreal conditions, advice and polite requests: hätte, wäre, könnte, and würde + infinitive for most other verbs.',
     prompt: 'Pick a situation and switch from Wirklichkeit to Konjunktiv II. Wishes make the house dream bigger.',
@@ -510,6 +529,11 @@
 
   MM.register({
     id: 'passiv', day: 19, week: 3,
+    vocab: [
+      ['bauen', 'to build'], ['liefern', 'to deliver'], ['reparieren', 'to repair'], ['bezahlen', 'to pay'],
+      ['stornieren', 'to cancel'], ['Drucker', 'printer', 'm'], ['Firma', 'company', 'f'], ['Rechnung', 'bill', 'f'],
+      ['Paket', 'parcel', 'n'],
+    ],
     title: 'Passiv',
     tagline: 'The passive puts the thing that something happens to in the spotlight: werden + Partizip II, the doer is optional (von + Dativ).',
     prompt: 'Pick a sentence and switch Aktiv/Passiv. The spotlight follows the subject; the object steps forward and becomes Nominativ.',
@@ -619,6 +643,11 @@
 
   MM.register({
     id: 'genitiv', day: 20, week: 3,
+    vocab: [
+      ['wegen', 'because of'], ['trotz', 'despite'], ['während', 'during'], ['Wetter', 'weather', 'n'],
+      ['Miete', 'rent', 'f'], ['Streik', 'strike', 'm'], ['Regen', 'rain', 'm'], ['Reise', 'trip', 'f'],
+      ['Probezeit', 'probation period', 'f'],
+    ],
     title: 'Genitiv: wegen, trotz, während',
     tagline: 'The genitive shows belonging and follows wegen, trotz and während: des/der, and masculine and neuter nouns add -s or -es.',
     prompt: 'Pick a noun and switch to Genitiv. The press stamps the -s onto masculine and neuter nouns.',
@@ -724,6 +753,11 @@
 
   MM.register({
     id: 'verben-mit-praepositionen', day: 21, week: 3,
+    vocab: [
+      ['warten auf', 'to wait for'], ['denken an', 'to think of'], ['sprechen über', 'to talk about'],
+      ['sich ärgern über', 'to be annoyed about'], ['sich interessieren für', 'to be interested in'],
+      ['träumen von', 'to dream of'], ['Termin', 'appointment', 'm'], ['Prüfung', 'exam', 'f'],
+    ],
     title: 'Verben mit Präpositionen',
     tagline: 'Many verbs come chained to a fixed preposition; ask with wo(r)- and answer with da(r)- for things, but use the preposition + wen/wem and a pronoun for people.',
     prompt: 'Pick a verb, choose a thing or a person, then step through Satz → Frage → kurze Antwort.',
@@ -851,6 +885,11 @@
 
   MM.register({
     id: 'konnektoren', day: 22, week: 3,
+    vocab: [
+      ['deshalb', 'so, that is why'], ['trotzdem', 'anyway, nevertheless'], ['obwohl', 'although'],
+      ['sondern', 'but rather'], ['denn', 'because'], ['krank', 'ill'], ['Taxi', 'taxi', 'n'],
+      ['Verspätung', 'delay', 'f'],
+    ],
     title: 'Konnektoren',
     tagline: 'deshalb and trotzdem take position 1 (verb next), obwohl sends the verb to the end, and denn and sondern change nothing.',
     prompt: 'Pick a connector, then join the two sentences. Watch what happens to the verb in the second clause.',

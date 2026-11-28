@@ -24,6 +24,11 @@
 
   MM.register({
     id: 'praesens', day: 1, week: 1,
+    vocab: [
+      ['wohnen', 'to live (somewhere)'], ['arbeiten', 'to work'], ['lernen', 'to learn'], ['sein', 'to be'],
+      ['haben', 'to have'], ['Hunger', 'hunger', 'm'], ['Lehrerin', 'teacher (woman)', 'f'], ['Zeit', 'time', 'f'],
+      ['müde', 'tired'],
+    ],
     title: 'Verben im Präsens',
     tagline: 'A German verb changes its ending for each person: ich wohne, du wohnst, er wohnt.',
     prompt: 'Pick a person and a verb. Watch the magenta verb block change its ending.',
@@ -119,6 +124,11 @@
 
   MM.register({
     id: 'artikel', day: 2, week: 1,
+    vocab: [
+      ['Bahnhof', 'station', 'm'], ['Apotheke', 'pharmacy', 'f'], ['Zimmer', 'room', 'n'],
+      ['Buch', 'book (plural: Bücher)', 'n'], ['Lampe', 'lamp', 'f'], ['Wohnung', 'flat', 'f'],
+      ['Mädchen', 'girl', 'n'], ['Tisch', 'table', 'm'], ['Stuhl', 'chair (plural: Stühle)', 'm'],
+    ],
     title: 'Der, die, das',
     tagline: 'Every noun has a gender: der (masculine), die (feminine), das (neuter). Learn each noun with its article.',
     prompt: 'Pick a noun, then switch between the, a and plural. Watch the article block.',
@@ -209,6 +219,10 @@
 
   MM.register({
     id: 'satzbau', day: 3, week: 1,
+    vocab: [
+      ['heute', 'today'], ['morgen', 'tomorrow'], ['woher', 'where from'], ['wo', 'where'], ['sprechen', 'to speak'],
+      ['trinken', 'to drink'], ['Kaffee', 'coffee', 'm'], ['Montag', 'Monday', 'm'], ['Tante', 'aunt', 'f'],
+    ],
     title: 'Verb an Position 2',
     tagline: 'In a German statement the conjugated verb is always the second element, whatever comes first.',
     prompt: 'Switch the sentence type and watch the magenta verb: it holds position 2, except in yes/no questions.',
@@ -291,6 +305,11 @@
 
   MM.register({
     id: 'akkusativ', day: 4, week: 1,
+    vocab: [
+      ['nehmen', 'to take, to have (food, drink)'], ['brauchen', 'to need'], ['Tee', 'tea', 'm'],
+      ['Apfel', 'apple (plural: Äpfel)', 'm'], ['Suppe', 'soup', 'f'], ['Brot', 'bread', 'n'],
+      ['Rucksack', 'backpack', 'm'], ['Auto', 'car', 'n'],
+    ],
     title: 'Akkusativ',
     tagline: 'The direct object takes the accusative. Only masculine nouns change: der becomes den, ein becomes einen.',
     prompt: 'Choose a food and switch between Nominativ (“That is …”) and Akkusativ (“I’ll take …”). Only der Kaffee changes.',
@@ -385,6 +404,11 @@
 
   MM.register({
     id: 'nicht-kein', day: 5, week: 1,
+    vocab: [
+      ['nicht', 'not'], ['kein', 'no, not a'], ['doch', 'yes (after a negative question)'], ['Hunger', 'hunger', 'm'],
+      ['Zeit', 'time', 'f'], ['Auto', 'car', 'n'], ['Geschwister', 'brothers and sisters', 'pl'],
+      ['teuer', 'expensive'],
+    ],
     title: 'nicht und kein',
     tagline: 'Use kein for nouns with ein or no article. Use nicht for everything else.',
     prompt: 'Pick a sentence and switch it between positive and negative. Does it take nicht or kein?',
@@ -472,6 +496,11 @@
 
   MM.register({
     id: 'modalverben', day: 6, week: 1,
+    vocab: [
+      ['können', 'can, to be able to'], ['müssen', 'must, to have to'], ['dürfen', 'may, to be allowed to'],
+      ['wollen', 'to want'], ['möchten', 'would like'], ['aufstehen', 'to get up'], ['Fußball', 'football', 'm'],
+      ['Büro', 'office', 'n'],
+    ],
     title: 'Modalverben',
     tagline: 'A modal verb takes position 2, and the main verb goes to the very end as an infinitive.',
     prompt: 'Add a modal verb and watch the main verb fly to the end: the sentence bracket (Satzklammer).',
@@ -558,6 +587,11 @@
 
   MM.register({
     id: 'trennbare-verben', day: 7, week: 1,
+    vocab: [
+      ['aufstehen', 'to get up'], ['anfangen', 'to begin'], ['einkaufen', 'to go shopping'], ['anrufen', 'to phone'],
+      ['einladen', 'to invite'], ['fernsehen', 'to watch TV'], ['Supermarkt', 'supermarket', 'm'],
+      ['Abend', 'evening', 'm'],
+    ],
     title: 'Trennbare Verben',
     tagline: 'Verbs like aufstehen split in two: the verb takes position 2 and the prefix jumps to the end.',
     prompt: 'Pick a verb. In the present tense the prefix flies to the end; add müssen and it joins the verb again.',
@@ -646,6 +680,10 @@
 
   MM.register({
     id: 'possessivartikel', day: 8, week: 1,
+    vocab: [
+      ['Mutter', 'mother', 'f'], ['Vater', 'father', 'm'], ['Bruder', 'brother', 'm'], ['Schwester', 'sister', 'f'],
+      ['Tochter', 'daughter', 'f'], ['Kind', 'child', 'n'], ['Hund', 'dog', 'm'], ['Eltern', 'parents', 'pl'],
+    ],
     title: 'mein, dein, sein, ihr',
     tagline: 'Possessives take the same endings as ein: mein Bruder, meine Schwester, meinen Bruder.',
     prompt: 'Pick whose family it is, then a family member. Switch to Akkusativ and watch the ending.',

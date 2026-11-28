@@ -11,6 +11,7 @@
  *     prompt: 'Short instruction for the interactive, shown above the stage.',
  *     body: '<section>...</section>',  // HTML explainer below the stage; a <div data-quiz></div> gets the quiz
  *     quiz: [ ...questions ],          // see quiz() below
+ *     vocab: [ [word, translation, gender?], ... ],  // optional word list with listen buttons (shared/vocab.js); gender 'm' | 'f' | 'n' | 'pl' for nouns
  *     mount(ctx) { ... return { dispose() {} } }  // dispose optional
  *   });
  *
@@ -34,7 +35,8 @@
   const phone = Math.min(window.innerWidth, window.innerHeight) < 600;
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const scenes = [];
-  window.MM = { register: s => scenes.push(s) };
+  const pages = []; // non-lesson pages (e.g. #review): routed like a lesson but kept out of the nav, pager and progress
+  window.MM = { register: s => scenes.push(s), page: s => pages.push(s), lessons: () => scenes.slice() };
 
   const host = document.getElementById('stage');
   const controls = document.getElementById('controls');
@@ -590,6 +592,7 @@
     if (P) showBest(P.lesson(lessonId));
     const finish = (li, ok, q) => {
       done++; if (ok) score++;
+      if (window.AkooReview) AkooReview.record(q.lesson || lessonId, q, ok); // missed questions come back on a spaced schedule
       li.classList.add(ok ? 'right' : 'wrong');
       if (ok && !reduce) { li.classList.remove('splash'); void li.offsetWidth; li.classList.add('splash'); }
       const why = li.querySelector('.why');
@@ -696,7 +699,7 @@
   // ---------- nav + routing ----------
   const nav = document.getElementById('nav');
   const WEEKS = CFG.levels || { 0: "Start here", 1: "A1 · Beginner", 2: "A2 · Elementary", 3: "B1 · Intermediate" };
-  const wk = s => s.day ? `Wk ${s.day}` : "Intro";
+  const wk = s => s.label || (s.day ? `Wk ${s.day}` : "Intro");
 
   function buildNav() {
     scenes.sort((a, b) => a.day - b.day);
@@ -745,7 +748,8 @@
   }
 
   function show(id, remount) {
-    const s = scenes.find(x => x.id === id) || scenes[0];
+    const s = scenes.find(x => x.id === id) || pages.find(x => x.id === id) || scenes[0];
+    const isPage = pages.includes(s);
     if (!s) return;
     if (remount && current && current.s === s) {
       // only the 3D stage and controls are rebuilt; the explainer and quiz progress stay as they are
@@ -767,12 +771,13 @@
     const qel = body.querySelector('[data-quiz]');
     if (qel && s.quiz) quiz(qel, s.quiz, s.id);
     if (window.AkooPodcast) window.AkooPodcast.mount(body, s.id); // adds a Hören player if this lesson has an episode
-    if (window.AkooProgress) window.AkooProgress.open(s.id, s.id !== 'akoo');
+    if (window.AkooVocab) window.AkooVocab.mount(body, s); // word list with listen buttons, if the lesson has vocab
+    if (window.AkooProgress && !isPage) window.AkooProgress.open(s.id, s.id !== 'akoo');
     paintContinue(s);
     nav.querySelectorAll('a[data-id]').forEach(a => a.setAttribute('aria-current', a.dataset.id === s.id ? 'page' : 'false'));
     const mcur = document.getElementById('mcur'); if (mcur) mcur.textContent = `${wk(s)} · ${s.title}`;
     const i = scenes.indexOf(s);
-    const prev = scenes[i - 1], next = scenes[i + 1];
+    const prev = isPage ? null : scenes[i - 1], next = isPage ? null : scenes[i + 1];
     document.getElementById('pager').innerHTML =
       (prev ? `<a href="#${prev.id}">← ${wk(prev)}: ${prev.title}</a>` : '<span></span>') +
       (next ? `<a href="#${next.id}">${wk(next)}: ${next.title} →</a>` : '<span></span>');

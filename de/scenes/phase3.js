@@ -28,6 +28,11 @@
 
   MM.register({
     id: 'zweiteilige-konnektoren', day: 23, week: 3,
+    vocab: [
+      ['entweder … oder', 'either … or'], ['weder … noch', 'neither … nor'], ['sowohl … als auch', 'both … and'],
+      ['zwar … aber', 'admittedly … but'], ['je … desto', 'the more … the more'], ['Stelle', 'job, position', 'f'],
+      ['Garten', 'garden', 'm'], ['Klimaanlage', 'air conditioning', 'f'],
+    ],
     title: 'Zweiteilige Konnektoren',
     tagline: 'Two-part connectors link two items or ideas: entweder … oder, weder … noch, sowohl … als auch, nicht nur … sondern auch, zwar … aber, je … desto.',
     prompt: 'Pick a pair. The arc links its two halves, and the two lamps show what the pair means: one, neither, both, or growing together.',
@@ -160,6 +165,11 @@
 
   MM.register({
     id: 'plusquamperfekt', day: 24, week: 3,
+    vocab: [
+      ['ankommen', 'to arrive'], ['abfahren', 'to leave, depart'], ['unterschreiben', 'to sign'],
+      ['vergessen', 'to forget'], ['schon', 'already'], ['Bahnhof', 'station', 'm'], ['Vertrag', 'contract', 'm'],
+      ['Pass', 'passport', 'm'], ['Ticket', 'ticket', 'n'],
+    ],
     title: 'Plusquamperfekt',
     tagline: 'The past before the past: hatte or war + Partizip II, for something that had already happened before another past event.',
     prompt: 'Pick a sentence. The timeline shows the earlier event (Plusquamperfekt) and the later one (Präteritum).',
@@ -263,6 +273,11 @@
 
   MM.register({
     id: 'n-deklination', day: 25, week: 3,
+    vocab: [
+      ['Kollege (den Kollegen)', 'colleague', 'm'], ['Kunde (den Kunden)', 'customer', 'm'],
+      ['Nachbar (den Nachbarn)', 'neighbour', 'm'], ['Student (den Studenten)', 'student', 'm'],
+      ['Tourist (den Touristen)', 'tourist', 'm'], ['Herr (Herrn)', 'Mr, gentleman', 'm'], ['Angebot', 'offer', 'n'],
+    ],
     title: 'n-Deklination',
     tagline: 'A group of masculine nouns, mostly people and animals, add -n or -en in every case except the nominative singular.',
     prompt: 'Pick a noun and a case. In every case except Nominativ, the ending block docks onto the noun.',
