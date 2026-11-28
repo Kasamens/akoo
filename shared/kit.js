@@ -45,28 +45,82 @@
     }));
 
     K.el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+    // ---- controls: every toy control is a real button, so Tab, Enter and Space work everywhere ----
+    // A polite live region says what each change did ("Kasus: Dativ. “dem” moved to position 3. …"),
+    // so the toys can be followed without seeing the stage. The visible readout itself is not live.
+    let live = null, action = '';
+    K.announce = msg => {
+      if (!msg) return;
+      if (!live || !live.isConnected) { live = K.el('p', 'sr-only'); live.setAttribute('aria-live', 'polite'); live.setAttribute('role', 'status'); ctx.controls.appendChild(live); }
+      live.textContent = '';
+      setTimeout(() => { if (live) live.textContent = msg; }, 60); // re-set so the same message is read again
+    };
+    const plain = h => { const d = document.createElement('div'); d.innerHTML = h; return (d.textContent || '').replace(/\s+/g, ' ').trim(); };
     K.btn = (label, fn, ghost) => {
       const b = K.el('button', 'btn' + (ghost ? ' ghost' : ''), label);
-      b.type = 'button'; b.addEventListener('click', fn); ctx.controls.appendChild(b); return b;
+      b.type = 'button';
+      b.addEventListener('click', e => { action = b.getAttribute('aria-label') || plain(label); fn(e); flush(); });
+      ctx.controls.appendChild(b); return b;
     };
+    // an on/off chip (aria-pressed); fn(on) runs on every change
+    K.toggle = (label, init, fn) => {
+      const b = K.el('button', 'chip', label); b.type = 'button';
+      let on = !!init; b.setAttribute('aria-pressed', String(on));
+      b.addEventListener('click', () => { on = !on; b.setAttribute('aria-pressed', String(on)); action = `${plain(label)}: ${on ? 'on' : 'off'}`; fn(on); flush(); });
+      ctx.controls.appendChild(b); return b;
+    };
+    // one-of-many chips: a radio group. Tab reaches the chosen chip; arrow keys (and Home/End) move and choose.
     K.chips = (label, opts, init, fn) => {
       const wrap = K.el('div', 'group');
       const lid = 'g' + Math.random().toString(36).slice(2, 8);
       wrap.innerHTML = `<span class="lbl" id="${lid}">${label}</span>`;
-      const row = K.el('div', 'row'); row.setAttribute('role', 'group'); row.setAttribute('aria-labelledby', lid);
+      const row = K.el('div', 'row'); row.setAttribute('role', 'radiogroup'); row.setAttribute('aria-labelledby', lid);
+      const name = plain(label);
       const bs = opts.map(o => {
-        const b = K.el('button', 'chip', o.label); b.type = 'button';
+        const b = K.el('button', 'chip', o.label); b.type = 'button'; b.setAttribute('role', 'radio');
         if (o.aria) b.setAttribute('aria-label', o.aria);
-        b.addEventListener('click', () => { set(o.v); fn(o.v); });
+        b.addEventListener('click', () => { set(o.v); action = `${name}: ${o.aria || plain(o.label)}`; fn(o.v); flush(); });
         row.appendChild(b); return [o.v, b];
       });
-      function set(v) { bs.forEach(([k, b]) => b.setAttribute('aria-pressed', String(k === v))); }
+      row.addEventListener('keydown', e => {
+        const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: 'first', End: 'last' };
+        if (!(e.key in keys)) return;
+        e.preventDefault();
+        const i = bs.findIndex(([, b]) => b === document.activeElement), d = keys[e.key], n = bs.length;
+        const j = d === 'first' ? 0 : d === 'last' ? n - 1 : ((i < 0 ? 0 : i) + d + n) % n;
+        bs[j][1].focus(); bs[j][1].click();
+      });
+      function set(v) {
+        const any = bs.some(([k]) => k === v);
+        bs.forEach(([k, b], i) => { const on = k === v; b.setAttribute('aria-checked', String(on)); b.tabIndex = on || (!any && i === 0) ? 0 : -1; });
+      }
       wrap.appendChild(row); set(init); ctx.controls.appendChild(wrap);
       return { set };
     };
+    // the readout under the stage. When its sentence changes, the live region says how (word moves, swaps).
+    let out = null, lastSentence = null, lastLine = '', pending = false;
+    const lineOf = r => { const c = r.cloneNode(true); c.querySelectorAll('button, .novoice').forEach(x => x.remove()); return plain(c.innerHTML.split(/<br\s*\/?>/i)[0]); };
+    const sentOf = r => { const d = r.querySelector('.de'); return d ? plain(d.innerHTML) : null; };
+    function flush() {
+      if (!out) { if (action) K.announce(action + '.'); action = ''; return; }
+      pending = false;
+      const sent = sentOf(out), line = lineOf(out);
+      const parts = [];
+      if (action) parts.push(action + '.');
+      if (sent != null && lastSentence != null && sent !== lastSentence) { const m = describe(lastSentence, sent); if (m) parts.push(m); }
+      if (line && line !== lastLine) parts.push(line);
+      lastSentence = sent; lastLine = line; action = '';
+      K.announce(parts.join(' '));
+    }
     K.readout = () => {
-      const r = K.el('div', 'readout'); r.setAttribute('aria-live', 'polite'); ctx.controls.appendChild(r);
+      const r = K.el('div', 'readout'); ctx.controls.appendChild(r);
       queueMicrotask(() => { if (r.parentNode === ctx.controls) ctx.controls.appendChild(r); });
+      out = r;
+      // changes made without a kit control (stage clicks, timers) are announced too, once per change
+      new MutationObserver(() => {
+        if (lastSentence == null && !lastLine) { lastSentence = sentOf(r); lastLine = lineOf(r); return; } // first paint: silent
+        if (!pending) { pending = true; queueMicrotask(() => { if (pending) flush(); }); }
+      }).observe(r, { childList: true, subtree: true, characterData: true });
       return r;
     };
     // sentence text from a word row
@@ -74,6 +128,29 @@
     // re-run a layout when the stage flips between portrait and landscape
     K.onPortrait = fn => { let p = ctx.portrait; ctx.onFrame(() => { if (ctx.portrait !== p) { p = ctx.portrait; fn(); } }); };
     return K;
+  }
+
+  // "“ich” moved to position 3" / "“wohne” became “wohnst”": what changed between two sentences
+  function describe(a, b) {
+    const words = s => s.split(/\s+/).map(w => w.replace(/^[„“”"«»(]+|[.,!?;:…»“”")]+$/g, '')).filter(Boolean);
+    const A = words(a), B = words(b), lo = w => w.toLowerCase();
+    if (!A.length || !B.length) return '';
+    const same = A.length === B.length && A.map(lo).sort().join(' ') === B.map(lo).sort().join(' ');
+    if (same) {
+      const used = new Set(), moves = [];
+      B.forEach((w, j) => {
+        const i = A.findIndex((x, k) => !used.has(k) && lo(x) === lo(w));
+        used.add(i);
+        if (i !== j && moves.length < 3) moves.push(`“${w}” moved to position ${j + 1}`);
+      });
+      return moves.length ? moves.join(', ') + '.' : '';
+    }
+    if (A.length === B.length) {
+      const ch = [];
+      B.forEach((w, j) => { if (lo(w) !== lo(A[j]) && ch.length < 3) ch.push(`“${A[j]}” became “${w}”`); });
+      return ch.length ? ch.join(', ') + '.' : '';
+    }
+    return '';
   }
 
   const cap = s => s.charAt(0).toUpperCase() + s.slice(1);

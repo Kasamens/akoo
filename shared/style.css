@@ -374,3 +374,13 @@ dialog.fb::backdrop { background: rgba(5,7,10,.6); backdrop-filter: blur(3px); }
 @keyframes tally { 0% { transform: rotate(1.5deg) scale(1.25); } 100% { transform: rotate(1.5deg) scale(1); } }
 @media (prefers-reduced-motion: reduce) { #stage .frame .ctr.bump { animation: none; } }
 @media (max-width: 600px) { #stage .frame { inset: 6px; } #stage .frame .c { width: 18px; height: 18px; } #stage .frame .lbl, #stage .frame .ctr { font-size: .6rem; bottom: 6px; } #stage .frame .lbl { display: none; } }
+
+/* ---------- keyboard + screen readers (toys, review, vocab) ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* one-of-many chips are radios now; same look as the pressed chip */
+.chip[aria-checked="true"] { background: var(--fg); color: var(--surface); border-color: var(--fg); }
+/* focus ring in the stage look: an accent stroke with a thin ink line inside, set off from the control */
+.btn:focus-visible, .chip:focus-visible, .opt:focus-visible, .say:focus-visible, .revlink:focus-visible {
+  outline: 2.5px solid var(--accent); outline-offset: 3px; box-shadow: 0 0 0 1.5px var(--ink);
+}
+

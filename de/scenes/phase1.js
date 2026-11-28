@@ -768,9 +768,7 @@
       const caseChips = K.chips('Fall', CASES.map((c, i) => ({ v: i, label: c, aria: CASE_DE[i] })), cc, v => { cc = v; select(true); });
       const genChips = K.chips('Genus', GENS.map((g, i) => ({ v: i, label: g, aria: GEN_DE[i] })), gg, v => { gg = v; select(true); });
       K.chips('Artikel', TYPES, type, v => { type = v; layout(); select(true); });
-      const enBtn = K.el('button', 'chip', 'schwache Zone: -en zeigen'); enBtn.type = 'button'; enBtn.setAttribute('aria-pressed', 'false');
-      enBtn.addEventListener('click', () => { showEn = !showEn; enBtn.setAttribute('aria-pressed', String(showEn)); layout(); });
-      ctx.controls.appendChild(enBtn);
+      K.toggle('schwache Zone: -en zeigen', false, on => { showEn = on; layout(); });
       // tap a pigeonhole
       const ray = new T.Raycaster(), ndc = new T.Vector2();
       function onDown(e) {
