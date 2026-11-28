@@ -55,3 +55,31 @@
     });
   });
 })();
+
+// page language: the UI is English (<html lang="en">), but example sentences, readouts, quiz options and
+// inline <i>/<em> words are in the course language. Tag them with lang=AKOO.lang so screen readers switch
+// voice and browsers hyphenate and spell-check them correctly. Runs on every re-render (lesson change, quiz reset).
+(function () {
+  const L = window.AKOO && window.AKOO.lang;
+  if (!L) return;
+  // target-language text the lessons mark up the same way everywhere
+  const ALWAYS = ['.de', '.mistakes s', '.quiz .tile', '.readout i'].join(',');
+  // inline <i>/<em> in lesson prose are course-language words, except in the English intro lesson ("akoo")
+  const INLINE = ['#body i', '#body em'].join(',');
+  const set = el => { if (!el.hasAttribute('lang')) el.lang = L; };
+  const tag = root => {
+    root.querySelectorAll(ALWAYS).forEach(set);
+    const cur = document.querySelector('#side a[aria-current="page"]');
+    if (!cur || cur.dataset.id !== 'akoo') root.querySelectorAll(INLINE).forEach(set);
+    // a gap-fill question ("Tu ___ à Accra.") and its options are course language; other questions are English
+    root.querySelectorAll('.quiz .qt').forEach(el => {
+      if (!el.querySelector('.gap')) return;
+      set(el);
+      el.closest('li').querySelectorAll('.opt, .why em').forEach(set);
+    });
+  };
+  let queued = false;
+  new MutationObserver(() => { if (!queued) { queued = true; queueMicrotask(() => { queued = false; tag(document.body); }); } })
+    .observe(document.body, { childList: true, subtree: true });
+  tag(document.body);
+})();
